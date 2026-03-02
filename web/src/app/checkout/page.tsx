@@ -273,7 +273,7 @@ export default function CheckoutPage() {
                                                     className="w-full px-4 py-3.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border)] focus:border-[var(--brand)] focus:ring-1 focus:ring-[var(--brand)] outline-none transition-all appearance-none disabled:opacity-50 disabled:cursor-not-allowed"
                                                 >
                                                     <option value="">Sélectionnez une commune</option>
-                                                    {selectedWilaya && COMMUNES_BY_WILAYA[selectedWilaya.code]?.filter((c): c is string => !!c).sort().map((c) => (
+                                                    {selectedWilaya && COMMUNES_BY_WILAYA[Number(selectedWilaya.code)]?.filter((c): c is string => !!c).sort().map((c) => (
                                                         <option key={c} value={c}>{c}</option>
                                                     ))}
                                                 </select>
