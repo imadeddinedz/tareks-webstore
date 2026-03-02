@@ -29,9 +29,27 @@ export async function POST(request: NextRequest) {
         }
 
         if (password === adminPassword) {
+            const cookieStore = await cookies();
+            cookieStore.set('hts_admin', '1', {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                maxAge: 60 * 60 * 24, // 24 hours
+                path: '/',
+            });
             return NextResponse.json({ success: true });
         }
         return NextResponse.json({ error: 'Mot de passe incorrect' }, { status: 401 });
+    } catch {
+        return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
+    }
+}
+
+export async function DELETE() {
+    try {
+        const cookieStore = await cookies();
+        cookieStore.delete('hts_admin');
+        return NextResponse.json({ success: true });
     } catch {
         return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
     }
@@ -83,3 +101,4 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
     }
 }
+

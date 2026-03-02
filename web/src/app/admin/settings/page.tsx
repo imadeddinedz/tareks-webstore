@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Shield, Wallet, Store, Save, Truck, Eye, EyeOff, Check, Loader2 } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Shield, Wallet, Store, Save, Truck, Eye, EyeOff, Check, Loader2, Image as ImageIcon, Upload, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useSettingsStore } from '@/store/settings';
+import Image from 'next/image';
 
 type TabKey = 'general' | 'shipping' | 'payments' | 'security';
 
@@ -15,15 +16,26 @@ const TABS: { key: TabKey; label: string; icon: any }[] = [
 ];
 
 export default function AdminSettings() {
-    const { storeName, storeEmail, storePhone, storeAddress, yalidineApiId, yalidineApiToken, updateSettings } = useSettingsStore();
+    const { storeName, storeEmail, storePhone, storeAddress, yalidineApiId, yalidineApiToken, heroImage, updateSettings } = useSettingsStore();
     const [activeTab, setActiveTab] = useState<TabKey>('general');
     const [saving, setSaving] = useState(false);
+    const [shippingRates, setShippingRates] = useState<any[]>([]);
+    const [loadingShipping, setLoadingShipping] = useState(false);
 
-    // General
     const [formState, setFormState] = useState({
         storeName: '', email: '', phone: '', address: '',
         apiId: '', apiToken: '',
     });
+
+    // Hero image
+    const [heroPreview, setHeroPreview] = useState('');
+    const [uploadingHero, setUploadingHero] = useState(false);
+    const heroInputRef = useRef<HTMLInputElement>(null);
+
+    // Logo image
+    const [logoPreview, setLogoPreview] = useState('');
+    const [uploadingLogo, setUploadingLogo] = useState(false);
+    const logoInputRef = useRef<HTMLInputElement>(null);
 
     // Security
     const [currentPassword, setCurrentPassword] = useState('');
@@ -41,7 +53,46 @@ export default function AdminSettings() {
             phone: storePhone || '', address: storeAddress || '',
             apiId: yalidineApiId || '', apiToken: yalidineApiToken || '',
         });
-    }, [storeName, storeEmail, storePhone, storeAddress, yalidineApiId, yalidineApiToken]);
+        setHeroPreview(heroImage || '/images/hero-bike.jpg');
+        setLogoPreview(useSettingsStore.getState().logoImage || '');
+    }, [storeName, storeEmail, storePhone, storeAddress, yalidineApiId, yalidineApiToken, heroImage]);
+
+    useEffect(() => {
+        if (activeTab === 'shipping' && shippingRates.length === 0) {
+            fetchShippingRates();
+        }
+    }, [activeTab]);
+
+    const fetchShippingRates = async () => {
+        setLoadingShipping(true);
+        try {
+            const res = await fetch('/api/admin/shipping');
+            if (res.ok) {
+                const data = await res.json();
+                setShippingRates(data || []);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+        setLoadingShipping(false);
+    };
+
+    const handleSaveShippingRates = async () => {
+        setSaving(true);
+        const toastId = toast.loading('Sauvegarde des tarifs...');
+        try {
+            const res = await fetch('/api/admin/shipping', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ rates: shippingRates })
+            });
+            if (!res.ok) throw new Error();
+            toast.success('Tarifs de livraison mis à jour', { id: toastId });
+        } catch (err) {
+            toast.error('Erreur lors de la sauvegarde des tarifs', { id: toastId });
+        }
+        setSaving(false);
+    };
 
     const handleSaveGeneral = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -53,6 +104,72 @@ export default function AdminSettings() {
         });
         setSaving(false);
         success ? toast.success('Paramètres sauvegardés') : toast.error('Erreur lors de la sauvegarde');
+    };
+
+    const handleHeroUpload = async (file: File) => {
+        if (!file.type.startsWith('image/')) {
+            toast.error('Veuillez sélectionner une image');
+            return;
+        }
+        if (file.size > 10 * 1024 * 1024) {
+            toast.error('Image trop lourde (max 10 MB)');
+            return;
+        }
+
+        setUploadingHero(true);
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const res = await fetch('/api/admin/upload', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Upload error');
+
+            const url = data.url;
+            setHeroPreview(url);
+            const success = await updateSettings({ heroImage: url });
+            if (success) {
+                toast.success('Image hero mise à jour');
+            } else {
+                toast.success('Image uploadée (sera synchronisée au prochain chargement)');
+            }
+        } catch (err: any) {
+            toast.error(err.message || "Erreur lors de l'upload");
+        }
+        setUploadingHero(false);
+    };
+
+    const handleLogoUpload = async (file: File) => {
+        if (!file.type.startsWith('image/')) {
+            toast.error('Veuillez sélectionner une image');
+            return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+            toast.error('Image trop lourde (max 5 MB)');
+            return;
+        }
+
+        setUploadingLogo(true);
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const res = await fetch('/api/admin/upload', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Upload error');
+
+            const url = data.url;
+            setLogoPreview(url);
+            const success = await updateSettings({ logoImage: url } as any);
+            if (success) {
+                toast.success('Logo mis à jour');
+            } else {
+                toast.success('Logo uploadé (sera synchronisé au prochain chargement)');
+            }
+        } catch (err: any) {
+            toast.error(err.message || "Erreur lors de l'upload du logo");
+        }
+        setUploadingLogo(false);
     };
 
     const handleChangePassword = async (e: React.FormEvent) => {
@@ -147,6 +264,69 @@ export default function AdminSettings() {
                                 </div>
                             </div>
 
+                            {/* Hero Image */}
+                            <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                                <CardHeader icon={ImageIcon} color="bg-purple-100 text-purple-600" title="Image Hero & Logo" desc="Gérez l'apparence visuelle principale de votre boutique." />
+                                <div className="px-5 py-5 sm:px-6 sm:py-6 space-y-8">
+
+                                    {/* Logo Section */}
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-900 mb-3">Logo de la boutique</label>
+                                        <div className="flex items-start gap-6">
+                                            <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-gray-50 flex items-center justify-center border-2 border-dashed border-gray-200 shrink-0 group">
+                                                {logoPreview ? (
+                                                    <Image src={logoPreview} alt="Logo" fill className="object-contain p-2" sizes="96px" />
+                                                ) : (
+                                                    <Store size={32} className="text-gray-300" />
+                                                )}
+                                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center cursor-pointer" onClick={() => logoInputRef.current?.click()}>
+                                                    {uploadingLogo && <Loader2 size={24} className="animate-spin text-amber-500" />}
+                                                </div>
+                                            </div>
+                                            <div className="flex-1">
+                                                <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { if (e.target.files?.[0]) handleLogoUpload(e.target.files[0]); }} />
+                                                <button type="button" onClick={() => logoInputRef.current?.click()} disabled={uploadingLogo} className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">
+                                                    <Upload size={16} /> Changer le logo
+                                                </button>
+                                                <p className="text-xs text-gray-500 mt-2">Format carré recommandé. Fond transparent de préférence (PNG, SVG). Max 5 MB.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Divider */}
+                                    <div className="h-px bg-gray-100 w-full" />
+
+                                    {/* Hero Banner Section */}
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-900 mb-3">Bannière Hero (Page d'accueil)</label>
+                                        <div className="relative w-full aspect-[21/9] rounded-xl overflow-hidden bg-gray-100 border border-gray-200 group">
+                                            {heroPreview && (
+                                                <Image src={heroPreview} alt="Hero preview" fill className="object-cover" sizes="(max-width: 1024px) 100vw, 800px" />
+                                            )}
+                                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => heroInputRef.current?.click()}
+                                                    disabled={uploadingHero}
+                                                    className="opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center gap-2 px-4 py-2.5 bg-white rounded-lg text-sm font-semibold text-gray-900 shadow-lg hover:bg-gray-50 disabled:opacity-50"
+                                                >
+                                                    {uploadingHero ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
+                                                    {uploadingHero ? 'Upload en cours...' : 'Changer l\'image'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <input
+                                            ref={heroInputRef}
+                                            type="file"
+                                            accept="image/*"
+                                            className="hidden"
+                                            onChange={(e) => { if (e.target.files?.[0]) handleHeroUpload(e.target.files[0]); }}
+                                        />
+                                        <p className="text-xs text-gray-500 mt-2.5">Recommandé : 1920×1080 ou plus. JPG, PNG, WebP. Max 10 MB.</p>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div className="flex justify-end">
                                 <button type="submit" disabled={saving} className="inline-flex items-center gap-2 rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-amber-600 disabled:opacity-50 transition-colors">
                                     {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
@@ -158,8 +338,8 @@ export default function AdminSettings() {
 
                     {/* ==================== LIVRAISON ==================== */}
                     {activeTab === 'shipping' && (
-                        <form onSubmit={handleSaveGeneral} className="space-y-6">
-                            <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                        <div className="space-y-6">
+                            <form onSubmit={handleSaveGeneral} className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
                                 <CardHeader icon={Truck} color="bg-amber-100 text-amber-600" title="Intégration Yalidine" desc="Configurez l'API de livraison Yalidine." />
                                 <div className="px-5 py-5 sm:px-6 sm:py-6 space-y-5">
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -172,24 +352,85 @@ export default function AdminSettings() {
                                             <input type="password" value={formState.apiToken} onChange={(e) => setFormState({ ...formState, apiToken: e.target.value })} placeholder="Votre API Token" className={inputClass} />
                                         </div>
                                     </div>
-                                    <p className="text-xs text-gray-400">Obtenez vos identifiants sur <a href="https://yalidine.com" target="_blank" className="text-amber-600 hover:underline">yalidine.com</a></p>
+                                    <div className="flex items-center justify-between">
+                                        <p className="text-xs text-gray-400">Obtenez vos identifiants sur <a href="https://yalidine.com" target="_blank" className="text-amber-600 hover:underline">yalidine.com</a></p>
+                                        <button type="submit" disabled={saving} className="inline-flex items-center gap-2 rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-amber-600 disabled:opacity-50">
+                                            {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+                                            Sauvegarder l'API
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden flex flex-col max-h-[600px]">
+                                <CardHeader icon={Truck} color="bg-blue-100 text-blue-600" title="Tarifs de livraison" desc="Modifiez les tarifs de livraison par wilaya. (DA)" />
+
+                                <div className="p-0 overflow-y-auto flex-1 bg-gray-50/30">
+                                    {loadingShipping ? (
+                                        <div className="flex flex-col items-center justify-center py-12">
+                                            <Loader2 size={32} className="animate-spin text-amber-500 mb-3" />
+                                            <p className="text-sm text-gray-500">Chargement des tarifs...</p>
+                                        </div>
+                                    ) : (
+                                        <table className="w-full text-left text-sm whitespace-nowrap">
+                                            <thead className="sticky top-0 bg-white border-b border-gray-200 shadow-sm z-10">
+                                                <tr>
+                                                    <th className="px-4 py-3 font-semibold text-gray-700">Wilaya</th>
+                                                    <th className="px-4 py-3 font-semibold text-gray-700 text-right w-32">À domicile (DA)</th>
+                                                    <th className="px-4 py-3 font-semibold text-gray-700 text-right w-32">En point relais (DA)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-100">
+                                                {shippingRates.map((rate, index) => (
+                                                    <tr key={rate.wilaya_code} className="hover:bg-gray-50 transition-colors">
+                                                        <td className="px-4 py-2.5 font-medium text-gray-900">
+                                                            <span className="text-gray-400 font-mono text-xs mr-2">{rate.wilaya_code.toString().padStart(2, '0')}</span>
+                                                            {rate.wilaya_name}
+                                                        </td>
+                                                        <td className="px-4 py-2.5 text-right">
+                                                            <input
+                                                                type="number"
+                                                                value={rate.home_price}
+                                                                onChange={(e) => {
+                                                                    const newRates = [...shippingRates];
+                                                                    newRates[index].home_price = parseInt(e.target.value) || 0;
+                                                                    setShippingRates(newRates);
+                                                                }}
+                                                                className="w-24 text-right px-2 py-1 rounded border border-gray-300 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none text-sm"
+                                                            />
+                                                        </td>
+                                                        <td className="px-4 py-2.5 text-right">
+                                                            <input
+                                                                type="number"
+                                                                value={rate.desk_price}
+                                                                onChange={(e) => {
+                                                                    const newRates = [...shippingRates];
+                                                                    newRates[index].desk_price = parseInt(e.target.value) || 0;
+                                                                    setShippingRates(newRates);
+                                                                }}
+                                                                className="w-24 text-right px-2 py-1 rounded border border-gray-300 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none text-sm"
+                                                            />
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    )}
+                                </div>
+
+                                <div className="px-5 py-4 border-t border-gray-100 bg-white flex justify-end">
+                                    <button
+                                        type="button"
+                                        onClick={handleSaveShippingRates}
+                                        disabled={saving || loadingShipping}
+                                        className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                                    >
+                                        {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+                                        Sauvegarder les tarifs
+                                    </button>
                                 </div>
                             </div>
-
-                            <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-                                <CardHeader icon={Truck} color="bg-blue-100 text-blue-600" title="Tarifs de livraison" desc="Les tarifs par wilaya sont gérés dans la base de données." />
-                                <div className="px-5 py-5 sm:px-6 sm:py-6">
-                                    <p className="text-sm text-gray-600">Les tarifs de livraison sont configurés automatiquement pour les 58 wilayas algériennes. Vous pouvez les modifier directement depuis le panneau Supabase.</p>
-                                </div>
-                            </div>
-
-                            <div className="flex justify-end">
-                                <button type="submit" disabled={saving} className="inline-flex items-center gap-2 rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-amber-600 disabled:opacity-50 transition-colors">
-                                    {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-                                    Sauvegarder
-                                </button>
-                            </div>
-                        </form>
+                        </div>
                     )}
 
                     {/* ==================== PAIEMENTS ==================== */}

@@ -1,6 +1,61 @@
 import { supabase } from './supabase';
 import type { Product, Category } from './data';
 
+async function applyPromotions(products: Product[]): Promise<Product[]> {
+  if (!supabase || products.length === 0) return products;
+
+  const { data: promos } = await supabase
+    .from('promotions')
+    .select('*, promotion_products(product_id)')
+    .eq('is_active', true);
+
+  if (!promos || promos.length === 0) return products;
+
+  const validPromos = promos.filter(p => {
+    const startValid = !p.starts_at || new Date(p.starts_at) <= new Date();
+    const endValid = !p.ends_at || new Date(p.ends_at) >= new Date();
+    return startValid && endValid && p.type !== 'free_shipping';
+  });
+
+  if (validPromos.length === 0) return products;
+
+  return products.map(product => {
+    let bestPrice = product.price;
+    let applied = false;
+
+    for (const promo of validPromos) {
+      let applies = false;
+      if (promo.applies_to === 'all') applies = true;
+      if (promo.applies_to === 'specific_products') {
+        if (promo.promotion_products?.some((pp: any) => pp.product_id === product.id)) applies = true;
+      }
+
+      if (applies) {
+        let discountedPrice = product.price;
+        if (promo.type === 'percentage') {
+          discountedPrice = product.price * (1 - promo.value / 100);
+        } else if (promo.type === 'fixed') {
+          discountedPrice = product.price - promo.value;
+        }
+
+        if (discountedPrice < bestPrice && discountedPrice > 0) {
+          bestPrice = discountedPrice;
+          applied = true;
+        }
+      }
+    }
+
+    if (applied && bestPrice < product.price) {
+      return {
+        ...product,
+        old_price: product.old_price || product.price, // Preserve existing old price if any
+        price: Math.round(bestPrice),
+      };
+    }
+    return product;
+  });
+}
+
 export async function getProducts(categorySlug?: string, includeHidden = false): Promise<Product[]> {
   if (!supabase) return [];
 
@@ -27,7 +82,7 @@ export async function getProducts(categorySlug?: string, includeHidden = false):
     console.error('Error fetching products:', error);
     return [];
   }
-  return (data as Product[]) || [];
+  return applyPromotions((data as Product[]) || []);
 }
 
 export async function getFeaturedProducts(): Promise<Product[]> {
@@ -44,7 +99,7 @@ export async function getFeaturedProducts(): Promise<Product[]> {
     console.error('Error fetching featured products:', error);
     return [];
   }
-  return (data as Product[]) || [];
+  return applyPromotions((data as Product[]) || []);
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
@@ -59,7 +114,8 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
     console.error('Error fetching product by slug:', error);
     return null;
   }
-  return data as Product;
+  const products = await applyPromotions([data as Product]);
+  return products[0] || null;
 }
 
 export async function getCategories(): Promise<Category[]> {
@@ -95,7 +151,7 @@ export async function getRelatedProducts(
     console.error('Error fetching related products:', error);
     return [];
   }
-  return (data as Product[]) || [];
+  return applyPromotions((data as Product[]) || []);
 }
 
 export async function deleteProduct(productId: string): Promise<boolean> {

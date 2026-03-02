@@ -11,6 +11,8 @@ export interface StoreSettings {
     storeAddress: string;
     yalidineApiId: string;
     yalidineApiToken: string;
+    heroImage: string;
+    logoImage: string;
 }
 
 interface SettingsStore extends StoreSettings {
@@ -23,12 +25,14 @@ interface SettingsStore extends StoreSettings {
 export const useSettingsStore = create<SettingsStore>()(
     persist(
         (set, get) => ({
-            storeName: 'MA BOUTIQUE',
+            storeName: 'High Tech Sport',
             storeEmail: '',
             storePhone: '',
             storeAddress: '',
             yalidineApiId: '',
             yalidineApiToken: '',
+            heroImage: '/images/hero-bike.jpg',
+            logoImage: '',
             isHydrated: false,
 
             setHydrated: () => set({ isHydrated: true }),
@@ -36,19 +40,24 @@ export const useSettingsStore = create<SettingsStore>()(
             fetchSettings: async () => {
                 if (!supabase) return;
                 try {
-                    const { data, error } = await supabase
-                        .from('store_settings')
-                        .select('*')
-                        .single();
+                    const [settingsRes, logoRes] = await Promise.all([
+                        supabase.from('store_settings').select('*').single(),
+                        supabase.from('cms_content').select('*').eq('key', 'logo_image').single()
+                    ]);
 
-                    if (data && !error) {
+                    const data = settingsRes.data;
+                    const logoUrl = logoRes.data?.value?.url || '';
+
+                    if (data && !settingsRes.error) {
                         set({
-                            storeName: data.store_name || 'MA BOUTIQUE',
+                            storeName: data.store_name || 'High Tech Sport',
                             storeEmail: data.store_email || '',
                             storePhone: data.store_phone || '',
                             storeAddress: data.store_address || '',
                             yalidineApiId: data.yalidine_api_id || '',
                             yalidineApiToken: data.yalidine_api_token || '',
+                            heroImage: data.hero_image || '/images/hero-bike.jpg',
+                            logoImage: logoUrl,
                         });
                     }
                 } catch (err) {
@@ -57,25 +66,22 @@ export const useSettingsStore = create<SettingsStore>()(
             },
 
             updateSettings: async (settings) => {
-                // Optimistic UI update
                 set({ ...settings });
 
                 if (!supabase) return false;
                 try {
-                    const { error } = await supabase
-                        .from('store_settings')
-                        .upsert({
-                            id: 1, // Single row assumption
-                            store_name: settings.storeName ?? get().storeName,
-                            store_email: settings.storeEmail ?? get().storeEmail,
-                            store_phone: settings.storePhone ?? get().storePhone,
-                            store_address: settings.storeAddress ?? get().storeAddress,
-                            yalidine_api_id: settings.yalidineApiId ?? get().yalidineApiId,
-                            yalidine_api_token: settings.yalidineApiToken ?? get().yalidineApiToken,
-                            updated_at: new Date().toISOString()
-                        });
+                    const response = await fetch('/api/admin/settings', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(settings),
+                    });
 
-                    return !error;
+                    if (!response.ok) {
+                        const err = await response.json();
+                        throw new Error(err.error || 'API Error');
+                    }
+
+                    return true;
                 } catch (err) {
                     console.error('Failed to update store settings', err);
                     return false;

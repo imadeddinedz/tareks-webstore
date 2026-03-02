@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getWilayas, Wilaya } from '@/lib/wilayas';
+import { COMMUNES_BY_WILAYA } from '@/lib/communes';
 import { useCartStore } from '@/store/cart';
 import { ArrowLeft, ArrowRight, ShieldCheck, Truck, Check, MapPin, User, Phone, PackageCheck, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
@@ -54,7 +55,7 @@ export default function CheckoutPage() {
     const handleWilayaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const w = wilayas.find(w => w.name === e.target.value);
         setSelectedWilaya(w || null);
-        setFormData({ ...formData, wilaya: e.target.value });
+        setFormData({ ...formData, wilaya: e.target.value, commune: '' }); // Reset commune when wilaya changes
     };
 
     const handleNextStep = (e: React.FormEvent) => {
@@ -64,7 +65,8 @@ export default function CheckoutPage() {
                 toast.error('Veuillez remplir vos informations personnelles');
                 return;
             }
-            if (formData.phone.length < 9) {
+            const cleanPhone = formData.phone.replace(/\s+/g, '');
+            if (cleanPhone.length < 9) {
                 toast.error('Numéro de téléphone invalide');
                 return;
             }
@@ -87,14 +89,12 @@ export default function CheckoutPage() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    customer: {
-                        first_name: formData.firstName,
-                        last_name: formData.lastName,
-                        phone: formData.phone,
-                        wilaya: formData.wilaya,
-                        commune: formData.commune,
-                        address: formData.address,
-                    },
+                    name: `${formData.firstName} ${formData.lastName}`.trim(),
+                    phone: formData.phone,
+                    wilaya: formData.wilaya,
+                    commune: formData.commune,
+                    address: formData.address,
+                    notes: formData.notes,
                     items: items.map(item => ({
                         product_id: item.id,
                         product_name: item.name,
@@ -102,9 +102,9 @@ export default function CheckoutPage() {
                         price: item.price,
                         options: item.selectedOptions || {},
                     })),
-                    total_amount: total,
-                    shipping_fee: shippingCost,
-                    notes: formData.notes,
+                    subtotal: subtotal,
+                    shipping_cost: shippingCost,
+                    total: total,
                 }),
             });
 
@@ -113,7 +113,7 @@ export default function CheckoutPage() {
             if (!res.ok) throw new Error(data.error || 'Erreur lors de la création de la commande');
 
             clearCart();
-            setOrderComplete({ id: data.orderId, total });
+            setOrderComplete({ id: data.order_number, total });
             setStep(3);
         } catch (error: any) {
             toast.error(error.message);
@@ -265,14 +265,18 @@ export default function CheckoutPage() {
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="text-sm font-medium text-[var(--text-secondary)]">Commune *</label>
-                                                <input
-                                                    type="text"
+                                                <select
                                                     required
                                                     value={formData.commune}
                                                     onChange={(e) => setFormData({ ...formData, commune: e.target.value })}
-                                                    className="w-full px-4 py-3.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border)] focus:border-[var(--brand)] focus:ring-1 focus:ring-[var(--brand)] outline-none transition-all"
-                                                    placeholder="Ex: Bir Mourad Raïs"
-                                                />
+                                                    disabled={!selectedWilaya}
+                                                    className="w-full px-4 py-3.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border)] focus:border-[var(--brand)] focus:ring-1 focus:ring-[var(--brand)] outline-none transition-all appearance-none disabled:opacity-50 disabled:cursor-not-allowed"
+                                                >
+                                                    <option value="">Sélectionnez une commune</option>
+                                                    {selectedWilaya && COMMUNES_BY_WILAYA[selectedWilaya.code]?.sort().map((c: string) => (
+                                                        <option key={c} value={c}>{c}</option>
+                                                    ))}
+                                                </select>
                                             </div>
                                         </div>
 
@@ -342,23 +346,23 @@ export default function CheckoutPage() {
                                     <div className="relative z-10">
                                         <motion.div
                                             initial={{ scale: 0 }}
-                                            animate={{ scale: 1, rotate: [0, -10, 10, -5, 5, 0] }}
+                                            animate={{ scale: 1 }}
                                             transition={{ type: "spring", duration: 1, delay: 0.2 }}
                                             className="w-24 h-24 mx-auto bg-gradient-to-br from-[var(--brand)] to-[var(--brand-dark)] rounded-full flex items-center justify-center text-[#08080F] shadow-[0_0_40px_rgba(0,212,170,0.4)] mb-8"
                                         >
                                             <Check size={48} strokeWidth={3} />
                                         </motion.div>
 
-                                        <h1 className="font-heading font-black text-4xl mb-4 text-white drop-shadow-md">
+                                        <h1 className="font-heading font-black text-4xl mb-4 text-gray-900 tracking-tight">
                                             Merci pour votre commande !
                                         </h1>
                                         <p className="text-xl text-[var(--text-secondary)] mb-8 max-w-lg mx-auto leading-relaxed">
-                                            Votre commande <strong className="text-white">#{orderComplete.id.substring(0, 8).toUpperCase()}</strong> a été enregistrée avec succès. Notre équipe vous contactera très prochainement pour la confirmation.
+                                            Votre commande <strong className="text-gray-900">#{orderComplete.id.substring(0, 8).toUpperCase()}</strong> a été enregistrée avec succès. Notre équipe vous contactera très prochainement pour la confirmation.
                                         </p>
 
                                         <div className="inline-block glass bg-[rgba(255,107,53,0.05)] border-[rgba(255,107,53,0.2)] rounded-3xl p-8 mb-10 w-full max-w-md">
                                             <p className="font-bold text-2xl text-[var(--accent)] mb-2">Total à payer</p>
-                                            <p className="font-heading font-black text-4xl text-white tracking-tight">{formatPrice(orderComplete.total)}</p>
+                                            <p className="font-heading font-black text-4xl text-gray-900 tracking-tight">{formatPrice(orderComplete.total)}</p>
                                             <div className="mt-4 flex items-center justify-center gap-2 text-sm font-medium text-[var(--text-muted)]">
                                                 <Truck size={16} /> Paiement à la livraison
                                             </div>
@@ -367,7 +371,7 @@ export default function CheckoutPage() {
                                         <div>
                                             <Link
                                                 href="/products"
-                                                className="inline-flex items-center justify-center px-8 py-4 rounded-xl glass text-white font-bold hover:bg-[var(--surface)] transition-all hover:scale-105 active:scale-95"
+                                                className="inline-flex items-center justify-center px-8 py-4 rounded-xl bg-gray-900 !text-white font-bold hover:bg-black transition-all hover:scale-105 active:scale-95 shadow-xl"
                                             >
                                                 Retour à la boutique
                                             </Link>

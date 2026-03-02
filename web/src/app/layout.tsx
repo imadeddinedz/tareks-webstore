@@ -5,7 +5,7 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { CartPanel } from '@/components/CartPanel';
 import { WhatsAppButton } from '@/components/WhatsAppButton';
-import { MobileNav } from '@/components/MobileNav';
+
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -87,8 +87,7 @@ export default function RootLayout({
           <Footer />
           <CartPanel />
           <WhatsAppButton />
-          <MobileNav />
-          <div className="mobile-nav-spacer md:hidden" />
+
         </ThemeProvider>
       </body>
     </html>

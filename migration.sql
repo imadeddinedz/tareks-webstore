@@ -80,6 +80,7 @@ INSERT INTO store_settings (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
 ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS admin_password TEXT DEFAULT 'admin123';
 ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS cod_enabled BOOLEAN DEFAULT true;
 ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS cod_fee INTEGER DEFAULT 0;
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS hero_image TEXT DEFAULT '';
 
 ALTER TABLE store_settings ENABLE ROW LEVEL SECURITY;
 CREATE POLICY IF NOT EXISTS "public_read_settings" ON store_settings FOR SELECT USING (true);

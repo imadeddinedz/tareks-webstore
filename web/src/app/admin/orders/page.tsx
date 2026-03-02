@@ -13,11 +13,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 const STATUS_OPTIONS = [
     { value: 'new', label: 'Nouvelle', className: 'status-new border-[#F59E0B]/30', icon: ShoppingCart },
     { value: 'confirmed', label: 'Confirmée', className: 'status-confirmed border-[#3B82F6]/30', icon: PackageCheck },
-    { value: 'preparing', label: 'En Préparation', className: 'status-preparing border-[#FF6B35]/30', icon: PackageCheck },
-    { value: 'shipped', label: 'Expédiée', className: 'status-shipped border-[#8B5CF6]/30', icon: Truck },
     { value: 'delivered', label: 'Livrée', className: 'status-delivered border-[#22C55E]/30', icon: PackageCheck },
-    { value: 'cancelled', label: 'Annulée', className: 'status-cancelled border-[#EF4444]/30', icon: XCircle },
     { value: 'returned', label: 'Retournée', className: 'status-returned border-[#9494B0]/30', icon: RotateCcw },
+    { value: 'cancelled', label: 'Annulée', className: 'status-cancelled border-[#EF4444]/30', icon: XCircle },
 ];
 
 export default function AdminOrders() {
@@ -41,13 +39,30 @@ export default function AdminOrders() {
     const handleStatusUpdate = async (orderId: string, newStatus: string) => {
         setOpenDropdown(null);
         const toastId = toast.loading('Mise à jour du statut...');
-        const result = await updateOrderStatus(orderId, newStatus);
 
-        if (result) {
+        try {
+            const res = await fetch(`/api/admin/orders/${orderId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus }),
+            });
+            const data = await res.json();
+
+            if (!res.ok) throw new Error(data.error || 'Erreur API');
+
             toast.success('Statut mis à jour', { id: toastId });
-            fetchOrders();
-        } else {
-            toast.error('Erreur lors de la mise à jour', { id: toastId });
+
+            // Auto-send to Yalidine if confirmed
+            if (newStatus === 'confirmed') {
+                const order = orders.find(o => o.id === orderId);
+                if (order) {
+                    await handleYalidineSend(order);
+                }
+            } else {
+                fetchOrders();
+            }
+        } catch (error: any) {
+            toast.error(error.message || 'Erreur lors de la mise à jour', { id: toastId });
         }
     };
 
@@ -81,8 +96,7 @@ export default function AdminOrders() {
 
             toast.success(`Colis créé avec succès! Tracking: ${json.data?.tracking || 'OK'}`, { id: toastId });
 
-            // Automatically mark as shipped/preparing
-            await updateOrderStatus(order.id, 'shipped');
+            // Update status internally to shipped or just refresh
             fetchOrders();
         } catch (error: any) {
             toast.error(`Erreur: ${error.message}`, { id: toastId, duration: 5000 });
@@ -154,7 +168,7 @@ export default function AdminOrders() {
                         <p className="text-gray-500 font-medium">Ajustez vos filtres ou attendez de nouvelles commandes.</p>
                     </div>
                 ) : (
-                    <div className="overflow-x-auto pb-24">
+                    <div className="overflow-x-auto pb-48">
                         <table className="w-full text-left border-collapse whitespace-nowrap">
                             <thead>
                                 <tr className="border-b border-gray-100 text-gray-500 text-sm font-bold uppercase tracking-wider bg-gray-50">
@@ -224,23 +238,26 @@ export default function AdminOrders() {
                                                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                                                     exit={{ opacity: 0, scale: 0.95 }}
                                                                     transition={{ duration: 0.15 }}
-                                                                    className="absolute right-0 top-full mt-1 w-48 rounded-lg bg-white border border-gray-200 shadow-lg z-50 overflow-hidden py-1"
+                                                                    className="absolute right-0 top-full mt-1 w-48 rounded-lg bg-white border border-gray-200 shadow-2xl z-50 overflow-hidden py-1"
                                                                 >
-                                                                    {STATUS_OPTIONS.map(opt => (
-                                                                        <button
-                                                                            key={opt.value}
-                                                                            onClick={() => handleStatusUpdate(order.id, opt.value)}
-                                                                            className={cn(
-                                                                                "w-full flex items-center gap-3 px-5 py-3.5 text-sm font-bold transition-colors text-left",
-                                                                                order.status === opt.value
-                                                                                    ? "bg-amber-50 text-[var(--brand-dark)]"
-                                                                                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                                                                            )}
-                                                                        >
-                                                                            <opt.icon size={16} className={order.status === opt.value ? "text-[var(--brand-dark)]" : "text-gray-400"} />
-                                                                            {opt.label}
-                                                                        </button>
-                                                                    ))}
+                                                                    {STATUS_OPTIONS.map(opt => {
+                                                                        if (opt.value === 'new') return null; // Don't show 'new' as a manual target usually, keep it simple
+                                                                        return (
+                                                                            <button
+                                                                                key={opt.value}
+                                                                                onClick={() => handleStatusUpdate(order.id, opt.value)}
+                                                                                className={cn(
+                                                                                    "w-full flex items-center gap-3 px-5 py-3.5 text-sm font-bold transition-colors text-left",
+                                                                                    order.status === opt.value
+                                                                                        ? "bg-amber-50 text-[var(--brand-dark)]"
+                                                                                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                                                                                )}
+                                                                            >
+                                                                                <opt.icon size={16} className={order.status === opt.value ? "text-[var(--brand-dark)]" : "text-gray-400"} />
+                                                                                {opt.label}
+                                                                            </button>
+                                                                        );
+                                                                    })}
                                                                 </motion.div>
                                                             )}
                                                         </AnimatePresence>

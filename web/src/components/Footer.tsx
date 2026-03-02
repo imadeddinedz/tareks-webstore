@@ -1,166 +1,128 @@
 'use client';
 
 import Link from 'next/link';
-import { Facebook, Instagram, Mail, MapPin, Phone, ShieldCheck, Truck, Clock } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Facebook, Instagram, MapPin, Phone, Mail } from 'lucide-react';
 import { useSettingsStore } from '@/store/settings';
+import { useEffect, useState } from 'react';
+
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}
 
 export function Footer() {
   const storeName = useSettingsStore((s) => s.storeName);
+  const storePhone = useSettingsStore((s) => s.storePhone);
+  const storeEmail = useSettingsStore((s) => s.storeEmail);
+  const storeAddress = useSettingsStore((s) => s.storeAddress);
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    fetch('/api/categories')
+      .then(r => r.json())
+      .then(data => { if (Array.isArray(data)) setCategories(data); })
+      .catch(() => { });
+  }, []);
 
   return (
-    <footer className="relative bg-[var(--bg-elevated)] pt-20 pb-10 border-t border-[var(--border)] overflow-hidden">
-      {/* Decorative gradient */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-px bg-gradient-to-r from-transparent via-[var(--brand)] to-transparent opacity-50" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-xl h-[400px] bg-[var(--brand-glow)] blur-[100px] opacity-20 pointer-events-none rounded-full" />
+    <footer className="bg-white border-t border-gray-100">
+      <div className="max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-16">
+        {/* Main footer content */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 py-16">
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 mb-16">
-
-          {/* Brand Column */}
-          <div className="lg:col-span-4 flex flex-col items-start">
-            <Link href="/" className="flex items-center gap-3 mb-6 group">
-              <div
-                className="flex items-center justify-center rounded-xl transition-transform duration-300 group-hover:rotate-12"
-                style={{
-                  width: 48, height: 48,
-                  background: 'linear-gradient(135deg, var(--brand), var(--brand-dark))',
-                  boxShadow: '0 0 20px var(--brand-glow)',
-                }}
-              >
-                <span className="text-2xl font-black text-[var(--bg)]">H</span>
+          {/* Brand */}
+          <div className="lg:col-span-1">
+            <Link href="/" className="flex items-center gap-2.5 mb-5 group">
+              <div className="w-9 h-9 rounded-lg bg-amber-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <span className="text-sm font-black text-white">H</span>
               </div>
-              <span className="text-2xl font-bold font-heading tracking-tight">
-                {storeName.split(' ')[0]} <span className="text-[var(--brand)]">{storeName.substring(storeName.indexOf(' ') + 1)}</span>
+              <span className="text-base font-bold tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>
+                {storeName.split(' ')[0]}{' '}
+                <span className="text-amber-500">{storeName.substring(storeName.indexOf(' ') + 1)}</span>
               </span>
             </Link>
-
-            <p className="text-[var(--text-secondary)] mb-6 max-w-sm text-sm sm:text-base leading-relaxed">
+            <p className="text-sm text-gray-400 leading-relaxed mb-6 max-w-xs">
               La référence en Algérie pour les équipements sportifs premium.
-              Montres connectées, vélos et accessoires de grandes marques mondiales.
             </p>
-
-            <div className="inline-flex flex-col gap-2 p-4 rounded-2xl glass border-[rgba(255,107,53,0.2)] bg-[rgba(255,107,53,0.02)] w-full max-w-sm">
-              <div className="flex items-center gap-3 text-[var(--accent)] font-bold mb-1">
-                <Truck size={20} />
-                <span>Paiement à la livraison</span>
-              </div>
-              <p className="text-xs text-[var(--text-muted)]">
-                Aucun risque. Commandez en ligne et payez uniquement lors de la réception de votre colis. Expédition vers les 58 wilayas.
-              </p>
+            <div className="flex gap-2">
+              <a href="https://facebook.com/Garmin.pro.dz" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-gray-50 hover:bg-[#1877F2] text-gray-400 hover:text-white flex items-center justify-center transition-all duration-200" aria-label="Facebook">
+                <Facebook size={16} />
+              </a>
+              <a href="#" className="w-9 h-9 rounded-full bg-gray-50 hover:bg-[#E4405F] text-gray-400 hover:text-white flex items-center justify-center transition-all duration-200" aria-label="Instagram">
+                <Instagram size={16} />
+              </a>
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="lg:col-span-2 lg:col-start-6">
-            <h3 className="font-heading font-bold text-lg mb-6 text-white">Navigation</h3>
-            <ul className="flex flex-col gap-4">
-              {[
-                { label: 'Accueil', href: '/' },
-                { label: 'Montres Intelligentes', href: '/products?category=montres-intelligentes' },
-                { label: 'Vélos & E-Bikes', href: '/products?category=velos' },
-                { label: 'Accessoires', href: '/products?category=accessoires' },
-                { label: 'Suivi de commande', href: '/order-tracking' },
-              ].map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-[var(--text-secondary)] hover:text-[var(--brand)] transition-colors text-sm font-medium flex items-center gap-2 group"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-[var(--border)] group-hover:bg-[var(--brand)] transition-colors" />
-                    {link.label}
-                  </Link>
+          {/* Categories (dynamic) */}
+          <div>
+            <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 mb-4">Catégories</h4>
+            <ul className="space-y-2.5">
+              {categories.map(c => (
+                <li key={c.id}>
+                  <Link href={`/products?category=${c.slug}`} className="text-sm text-gray-400 hover:text-amber-600 transition-colors">{c.name}</Link>
                 </li>
               ))}
+              <li><Link href="/products" className="text-sm text-gray-400 hover:text-amber-600 transition-colors">Tous les produits</Link></li>
             </ul>
           </div>
 
-          {/* Policy Links */}
-          <div className="lg:col-span-2">
-            <h3 className="font-heading font-bold text-lg mb-6 text-white">Informations</h3>
-            <ul className="flex flex-col gap-4">
+          {/* Info */}
+          <div>
+            <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 mb-4">Informations</h4>
+            <ul className="space-y-2.5">
               {[
-                { label: 'À propos de nous', href: '/about' },
-                { label: 'Questions fréquentes', href: '/faq' },
+                { label: 'À propos', href: '/about' },
+                { label: 'FAQ', href: '/faq' },
                 { label: 'Politique de retour', href: '/returns' },
-                { label: 'Contactez-nous', href: '/contact' },
-              ].map((link) => (
+                { label: 'Suivi de commande', href: '/order-tracking' },
+                { label: 'Contact', href: '/contact' },
+              ].map(link => (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-[var(--text-secondary)] hover:text-[var(--brand)] transition-colors text-sm font-medium flex items-center gap-2 group"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-[var(--border)] group-hover:bg-[var(--brand)] transition-colors" />
-                    {link.label}
-                  </Link>
+                  <Link href={link.href} className="text-sm text-gray-400 hover:text-amber-600 transition-colors">{link.label}</Link>
                 </li>
               ))}
             </ul>
           </div>
 
           {/* Contact */}
-          <div className="lg:col-span-3 lg:col-start-10">
-            <h3 className="font-heading font-bold text-lg mb-6 text-white">Contact</h3>
-            <ul className="flex flex-col gap-5">
-              <li className="flex items-start gap-4 text-[var(--text-secondary)] group">
-                <div className="mt-1 p-2 rounded-lg bg-[var(--surface)] text-[var(--brand)] group-hover:bg-[var(--brand)] group-hover:text-black transition-colors">
-                  <MapPin size={18} />
-                </div>
-                <div className="text-sm">
-                  <strong className="block text-[var(--text)] mb-1">Notre Boutique</strong>
-                  Centre-ville Khemis Miliana,<br />
-                  Aïn Defla, Algérie
-                </div>
-              </li>
-              <li className="flex items-start gap-4 text-[var(--text-secondary)] group">
-                <div className="mt-1 p-2 rounded-lg bg-[var(--surface)] text-[var(--brand)] group-hover:bg-[var(--brand)] group-hover:text-black transition-colors">
-                  <Phone size={18} />
-                </div>
-                <div className="text-sm">
-                  <strong className="block text-[var(--text)] mb-1">Téléphone & WhatsApp</strong>
-                  <a href="tel:0555555555" className="hover:text-[var(--brand)] transition-colors">05 55 55 55 55</a><br />
-                  <a href="tel:0666666666" className="hover:text-[var(--brand)] transition-colors">06 66 66 66 66</a>
-                </div>
-              </li>
-              <li className="flex items-start gap-4 text-[var(--text-secondary)] group">
-                <div className="mt-1 p-2 rounded-lg bg-[var(--surface)] text-[var(--brand)] group-hover:bg-[var(--brand)] group-hover:text-black transition-colors">
-                  <Clock size={18} />
-                </div>
-                <div className="text-sm">
-                  <strong className="block text-[var(--text)] mb-1">Horaires d'ouverture</strong>
-                  Samedi - Jeudi : 09h00 - 18h00<br />
-                  Vendredi : Fermé
-                </div>
-              </li>
+          <div>
+            <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-900 mb-4">Contact</h4>
+            <ul className="space-y-3.5">
+              {storeAddress && (
+                <li className="flex items-start gap-3 text-sm text-gray-400">
+                  <MapPin size={15} className="text-amber-500 shrink-0 mt-0.5" />
+                  <span>{storeAddress}</span>
+                </li>
+              )}
+              {storePhone && (
+                <li className="flex items-start gap-3 text-sm text-gray-400">
+                  <Phone size={15} className="text-amber-500 shrink-0 mt-0.5" />
+                  <a href={`tel:${storePhone}`} className="hover:text-amber-600 transition-colors">{storePhone}</a>
+                </li>
+              )}
+              {storeEmail && (
+                <li className="flex items-start gap-3 text-sm text-gray-400">
+                  <Mail size={15} className="text-amber-500 shrink-0 mt-0.5" />
+                  <a href={`mailto:${storeEmail}`} className="hover:text-amber-600 transition-colors">{storeEmail}</a>
+                </li>
+              )}
+              {!storeAddress && !storePhone && !storeEmail && (
+                <li className="text-sm text-gray-300 italic">Configurez les infos dans les paramètres admin.</li>
+              )}
             </ul>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-[var(--border)] gap-6">
-          <p className="text-[var(--text-muted)] text-sm font-medium">
-            &copy; {new Date().getFullYear()} {storeName}. Tous droits réservés.
+        {/* Bottom bar */}
+        <div className="flex flex-col sm:flex-row items-center justify-between py-5 border-t border-gray-100 gap-3">
+          <p className="text-xs text-gray-300">
+            © {new Date().getFullYear()} {storeName}. Tous droits réservés.
           </p>
-
-          <div className="flex items-center gap-3">
-            <a
-              href="https://facebook.com/Garmin.pro.dz"
-              target="_blank"
-              rel="noreferrer"
-              className="w-10 h-10 rounded-full flex items-center justify-center glass text-[var(--text-secondary)] hover:text-white hover:bg-[#1877F2] hover:border-[#1877F2] transition-colors"
-              aria-label="Facebook"
-            >
-              <Facebook size={18} fill="currentColor" className="border-none" />
-            </a>
-            <a
-              href="#"
-              target="_blank"
-              rel="noreferrer"
-              className="w-10 h-10 rounded-full flex items-center justify-center glass text-[var(--text-secondary)] hover:text-white hover:bg-[#E4405F] hover:border-[#E4405F] transition-colors"
-              aria-label="Instagram"
-            >
-              <Instagram size={18} />
-            </a>
+          <div className="flex items-center gap-4">
+            <span className="text-[10px] text-gray-300 font-medium">🚚 Livraison 58 wilayas</span>
+            <span className="text-[10px] text-gray-300 font-medium">💰 Paiement à la livraison</span>
           </div>
         </div>
       </div>

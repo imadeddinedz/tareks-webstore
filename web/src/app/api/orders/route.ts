@@ -11,7 +11,7 @@ function generateOrderNumber(): string {
 
 function validateAlgerianPhone(phone: string): boolean {
     const cleaned = phone.replace(/\s+/g, '').replace(/-/g, '');
-    return /^(05|06|07)\d{8}$/.test(cleaned);
+    return /^(?:0)?(5|6|7)\d{8}$/.test(cleaned);
 }
 
 // Rate limiting: simple in-memory store

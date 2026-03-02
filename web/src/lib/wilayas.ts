@@ -1,3 +1,5 @@
+import { supabase } from './supabase';
+
 export interface Wilaya {
   code: number;
   name: string;
@@ -78,5 +80,23 @@ export function getShippingCost(wilayaCode: number, type: 'desk' | 'home' = 'hom
 }
 
 export async function getWilayas(): Promise<Wilaya[]> {
-  return WILAYAS;
+  if (!supabase) return WILAYAS;
+  const { data, error } = await supabase
+    .from('shipping_rates')
+    .select('*')
+    .eq('is_active', true)
+    .order('wilaya_code');
+
+  if (error || !data || data.length === 0) {
+    console.warn('Error fetching shipping rates or empty falling back to static WILAYAS', error);
+    return WILAYAS;
+  }
+
+  return data.map((row: any) => ({
+    code: row.wilaya_code,
+    name: row.wilaya_name,
+    deskPrice: row.desk_price,
+    homePrice: row.home_price,
+    estimatedDays: row.estimated_days,
+  }));
 }
