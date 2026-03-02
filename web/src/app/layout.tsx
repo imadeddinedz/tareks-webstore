@@ -5,6 +5,7 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { CartPanel } from '@/components/CartPanel';
 import { WhatsAppButton } from '@/components/WhatsAppButton';
+import { Suspense } from 'react';
 
 import './globals.css';
 
@@ -82,7 +83,9 @@ export default function RootLayout({
               duration: 3000,
             }}
           />
-          <Header />
+          <Suspense fallback={<div className="h-[60px]" />}>
+            <Header />
+          </Suspense>
           <main style={{ minHeight: '100vh' }}>{children}</main>
           <Footer />
           <CartPanel />

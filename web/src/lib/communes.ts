@@ -1,4 +1,4 @@
-export const COMMUNES_BY_WILAYA: Record<number, string[]> = {
+export const COMMUNES_BY_WILAYA: Record<number, (string | null)[]> = {
   "1": [
     null,
     null,
