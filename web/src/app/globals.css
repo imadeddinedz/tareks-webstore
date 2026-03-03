@@ -139,6 +139,16 @@ a {
 }
 
 /* ===== KEYFRAMES ===== */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;

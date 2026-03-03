@@ -1,9 +1,20 @@
 'use client';
 
 import { MessageCircle } from 'lucide-react';
+import { useSettingsStore } from '@/store/settings';
+import { useEffect, useState } from 'react';
 
 export function WhatsAppButton() {
-    const whatsappNumber = '213550000000'; // À remplacer par le vrai numéro
+    const [mounted, setMounted] = useState(false);
+    const storePhone = useSettingsStore((s) => s.storePhone) || '+213550000000';
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    if (!mounted) return null;
+
+    const whatsappNumber = storePhone.replace(/[\s+]/g, '');
     const message = encodeURIComponent(
         'Bonjour ! Je suis intéressé(e) par vos produits sur High Tech Sport. Pouvez-vous me donner plus d\'informations ?'
     );

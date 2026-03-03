@@ -143,9 +143,9 @@ export default function AdminProducts() {
                       <div className="relative w-14 h-14 rounded-xl bg-gray-50 border border-gray-200 overflow-hidden shrink-0 shadow-sm">
                         <Image src={product.images[0] || '/images/placeholder.webp'} alt={product.name} fill className="object-cover" />
                       </div>
-                      <div>
-                        <div className="font-bold text-gray-900 max-w-[300px] truncate group-hover:text-amber-600 transition-colors">{product.name}</div>
-                        <div className="text-xs font-medium text-gray-500 mt-1 max-w-[300px] truncate">{product.description}</div>
+                      <div className="min-w-0">
+                        <div className="font-bold text-gray-900 truncate max-w-[150px] md:max-w-[200px] lg:max-w-[250px] xl:max-w-[300px] group-hover:text-amber-600 transition-colors" title={product.name ?? undefined}>{product.name}</div>
+                        <div className="text-xs font-medium text-gray-500 mt-1 truncate max-w-[150px] md:max-w-[200px] lg:max-w-[250px] xl:max-w-[300px]" title={product.description ?? undefined}>{product.description}</div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
