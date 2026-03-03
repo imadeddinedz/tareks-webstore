@@ -3,7 +3,9 @@
 -- Run this in Supabase SQL Editor
 -- ============================================
 
--- 1. Add new columns to promotions table
+-- 1. Add new columns to existing tables
+ALTER TABLE categories ADD COLUMN IF NOT EXISTS image TEXT;
+
 ALTER TABLE promotions ADD COLUMN IF NOT EXISTS name TEXT;
 ALTER TABLE promotions ADD COLUMN IF NOT EXISTS description TEXT;
 ALTER TABLE promotions ADD COLUMN IF NOT EXISTS discount_type TEXT DEFAULT 'percentage';
@@ -90,3 +92,18 @@ CREATE INDEX IF NOT EXISTS idx_promo_products_promo ON promotion_products(promot
 CREATE INDEX IF NOT EXISTS idx_promo_products_product ON promotion_products(product_id);
 CREATE INDEX IF NOT EXISTS idx_bundle_items_bundle ON bundle_items(bundle_id);
 CREATE INDEX IF NOT EXISTS idx_bundle_items_product ON bundle_items(product_id);
+
+-- 6. CMS Content Updates
+CREATE TABLE IF NOT EXISTS cms_content (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  key TEXT NOT NULL UNIQUE,
+  value JSONB NOT NULL DEFAULT '{}'::jsonb,
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE cms_content ENABLE ROW LEVEL SECURITY;
+CREATE POLICY IF NOT EXISTS "public_read_cms" ON cms_content FOR SELECT USING (true);
+
+INSERT INTO cms_content (key, value) VALUES
+  ('announcement_bar', '{"text": "🚚 Livraison disponible vers les 58 wilayas — Paiement à la livraison", "is_active": true}'::jsonb)
+ON CONFLICT (key) DO NOTHING;

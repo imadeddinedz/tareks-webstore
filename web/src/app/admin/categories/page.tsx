@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, FolderOpen, GripVertical, Loader2, X } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Plus, Edit2, Trash2, FolderOpen, GripVertical, Loader2, X, Upload, Image as ImageIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 
 interface Category {
     id: string;
@@ -28,6 +29,11 @@ export default function AdminCategoriesPage() {
     const [slug, setSlug] = useState('');
     const [description, setDescription] = useState('');
     const [isActive, setIsActive] = useState(true);
+    const [imagePreview, setImagePreview] = useState('');
+
+    // Image Upload
+    const [uploadingImage, setUploadingImage] = useState(false);
+    const imageInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => { fetchCategories(); }, []);
 
@@ -45,7 +51,7 @@ export default function AdminCategoriesPage() {
 
     function openCreate() {
         setEditing(null);
-        setName(''); setSlug(''); setDescription(''); setIsActive(true);
+        setName(''); setSlug(''); setDescription(''); setIsActive(true); setImagePreview('');
         setIsModalOpen(true);
     }
 
@@ -53,7 +59,28 @@ export default function AdminCategoriesPage() {
         setEditing(cat);
         setName(cat.name); setSlug(cat.slug);
         setDescription(cat.description || ''); setIsActive(cat.is_active);
+        setImagePreview(cat.image || '');
         setIsModalOpen(true);
+    }
+
+    async function handleImageUpload(file: File) {
+        if (!file.type.startsWith('image/')) { toast.error('Veuillez sélectionner une image'); return; }
+        if (file.size > 5 * 1024 * 1024) { toast.error('Image trop lourde (max 5 MB)'); return; }
+
+        setUploadingImage(true);
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            const res = await fetch('/api/admin/upload', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Erreur upload');
+
+            setImagePreview(data.url);
+            toast.success('Image importée');
+        } catch (err: any) {
+            toast.error(err.message || 'Erreur');
+        }
+        setUploadingImage(false);
     }
 
     function autoSlug(val: string) {
@@ -73,7 +100,7 @@ export default function AdminCategoriesPage() {
             const res = await fetch(url, {
                 method: editing ? 'PUT' : 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, slug, description: description || null, is_active: isActive }),
+                body: JSON.stringify({ name, slug, description: description || null, is_active: isActive, image: imagePreview || null }),
             });
             if (!res.ok) {
                 const d = await res.json().catch(() => ({}));
@@ -136,11 +163,18 @@ export default function AdminCategoriesPage() {
                             <div key={cat.id} className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50 transition-colors group">
                                 <GripVertical size={16} className="text-gray-300 cursor-grab shrink-0" />
                                 <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2.5">
-                                        <span className="font-semibold text-sm text-gray-900">{cat.name}</span>
-                                        {!cat.is_active && (
-                                            <span className="px-1.5 py-0.5 rounded text-[10px] bg-gray-100 text-gray-500 font-bold uppercase">Masquée</span>
+                                    <div className="flex items-center gap-3">
+                                        {cat.image && (
+                                            <div className="relative w-8 h-8 rounded-md overflow-hidden bg-gray-100 border border-gray-200 shrink-0">
+                                                <Image src={cat.image} alt={cat.name} fill className="object-cover" sizes="32px" />
+                                            </div>
                                         )}
+                                        <div className="flex items-center gap-2.5">
+                                            <span className="font-semibold text-sm text-gray-900">{cat.name}</span>
+                                            {!cat.is_active && (
+                                                <span className="px-1.5 py-0.5 rounded text-[10px] bg-gray-100 text-gray-500 font-bold uppercase">Masquée</span>
+                                            )}
+                                        </div>
                                     </div>
                                     <p className="text-xs text-gray-400 mt-0.5">/{cat.slug} • {cat.product_count || 0} produit(s)</p>
                                 </div>
@@ -188,6 +222,27 @@ export default function AdminCategoriesPage() {
                                 <div>
                                     <label className="block text-xs font-medium text-gray-700">Description</label>
                                     <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} placeholder="Description optionnelle..." className={inputClass + ' resize-none'} />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-700 mb-2">Image de la catégorie</label>
+                                    <div className="flex items-start gap-4">
+                                        <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-gray-50 flex items-center justify-center border-2 border-dashed border-gray-200 shrink-0 group">
+                                            {imagePreview ? (
+                                                <Image src={imagePreview} alt="Preview" fill className="object-cover" sizes="64px" />
+                                            ) : (
+                                                <ImageIcon size={20} className="text-gray-300" />
+                                            )}
+                                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center cursor-pointer" onClick={() => imageInputRef.current?.click()}>
+                                                {uploadingImage && <Loader2 size={16} className="animate-spin text-amber-500" />}
+                                            </div>
+                                        </div>
+                                        <div className="flex-1">
+                                            <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { if (e.target.files?.[0]) handleImageUpload(e.target.files[0]); }} />
+                                            <button type="button" onClick={() => imageInputRef.current?.click()} disabled={uploadingImage} className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-200 rounded-md text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">
+                                                <Upload size={14} /> Importer une image
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <button type="button" onClick={() => setIsActive(!isActive)} className={`w-10 h-5.5 rounded-full relative transition-colors ${isActive ? 'bg-green-500' : 'bg-gray-300'}`}>

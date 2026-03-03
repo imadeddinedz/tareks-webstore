@@ -28,7 +28,7 @@ export function Header() {
   const items = useCartStore((s) => s.items);
   const toggleCart = useCartStore((s) => s.toggleCart);
   const itemCount = items.reduce((sum, i) => sum + i.quantity, 0);
-  const { storeName, logoImage } = useSettingsStore();
+  const { storeName, logoImage, announcementText, announcementActive } = useSettingsStore();
 
   // Fetch categories for dynamic nav
   useEffect(() => {
@@ -73,15 +73,22 @@ export function Header() {
   return (
     <>
       {/* ═══ Announcement Bar ═══ */}
-      <div
-        className={cn(
-          'relative z-50 text-center text-xs font-semibold tracking-wide transition-all duration-500',
-          'py-2 px-4 bg-gray-950 text-white/80',
-          scrolled ? 'h-0 py-0 overflow-hidden opacity-0' : 'opacity-100'
-        )}
-      >
-        🚚 Livraison vers les 58 wilayas — Paiement à la livraison
-      </div>
+      {announcementActive && (
+        <div
+          className={cn(
+            'relative z-50 overflow-hidden text-xs font-semibold tracking-wide transition-all duration-500',
+            'bg-gray-950 text-white/80 flex items-center',
+            scrolled ? 'h-0 py-0 opacity-0' : 'h-8 opacity-100'
+          )}
+        >
+          <div className="absolute whitespace-nowrap animate-[marquee_20s_linear_infinite] px-4">
+            <span className="mx-8">{announcementText}</span>
+            <span className="mx-8">{announcementText}</span>
+            <span className="mx-8">{announcementText}</span>
+            <span className="mx-8">{announcementText}</span>
+          </div>
+        </div>
+      )}
 
       {/* ═══ Dynamic Island Header ═══ */}
       <header className="sticky top-0 z-40 w-full flex justify-center pointer-events-none" style={{ paddingTop: scrolled ? 10 : 0 }}>

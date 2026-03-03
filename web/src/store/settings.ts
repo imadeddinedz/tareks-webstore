@@ -13,6 +13,8 @@ export interface StoreSettings {
     yalidineApiToken: string;
     heroImage: string;
     logoImage: string;
+    announcementText: string;
+    announcementActive: boolean;
 }
 
 interface SettingsStore extends StoreSettings {
@@ -33,6 +35,8 @@ export const useSettingsStore = create<SettingsStore>()(
             yalidineApiToken: '',
             heroImage: '/images/hero-bike.jpg',
             logoImage: '',
+            announcementText: '🚚 Livraison disponible vers les 58 wilayas — Paiement à la livraison',
+            announcementActive: true,
             isHydrated: false,
 
             setHydrated: () => set({ isHydrated: true }),
@@ -40,13 +44,20 @@ export const useSettingsStore = create<SettingsStore>()(
             fetchSettings: async () => {
                 if (!supabase) return;
                 try {
-                    const [settingsRes, logoRes] = await Promise.all([
+                    const [settingsRes, cmsRes] = await Promise.all([
                         supabase.from('store_settings').select('*').single(),
-                        supabase.from('cms_content').select('*').eq('key', 'logo_image').single()
+                        supabase.from('cms_content').select('*').in('key', ['logo_image', 'announcement_bar'])
                     ]);
 
                     const data = settingsRes.data;
-                    const logoUrl = logoRes.data?.value?.url || '';
+                    const cmsData = cmsRes.data || [];
+
+                    const logoItem = cmsData.find((item: any) => item.key === 'logo_image');
+                    const announcementItem = cmsData.find((item: any) => item.key === 'announcement_bar');
+
+                    const logoUrl = logoItem?.value?.url || '';
+                    const announcementText = announcementItem?.value?.text || '🚚 Livraison disponible vers les 58 wilayas — Paiement à la livraison';
+                    const announcementActive = announcementItem?.value?.is_active ?? true;
 
                     if (data && !settingsRes.error) {
                         set({
@@ -58,6 +69,8 @@ export const useSettingsStore = create<SettingsStore>()(
                             yalidineApiToken: data.yalidine_api_token || '',
                             heroImage: data.hero_image || '/images/hero-bike.jpg',
                             logoImage: logoUrl,
+                            announcementText,
+                            announcementActive,
                         });
                     }
                 } catch (err) {

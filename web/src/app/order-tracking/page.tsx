@@ -59,7 +59,7 @@ export default function OrderTrackingPage() {
             <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.6rem', fontWeight: 700, marginBottom: 12, textAlign: 'center' }}>
                 Suivi de commande
             </h1>
-            <p style={{ textAlign: 'center', color: 'var(--color-text-secondary)', marginBottom: 32, fontSize: '0.9rem' }}>
+            <p style={{ textAlign: 'center', color: 'var(--text-secondary)', marginBottom: 32, fontSize: '0.9rem' }}>
                 Entrez votre numéro de téléphone ou numéro de commande
             </p>
 
@@ -79,7 +79,7 @@ export default function OrderTrackingPage() {
             </form>
 
             {searched && orders.length === 0 && !loading && (
-                <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--color-text-muted)' }}>
+                <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
                     <Package size={48} style={{ margin: '0 auto 16px', opacity: 0.3 }} />
                     <p style={{ fontWeight: 600 }}>Aucune commande trouvée</p>
                     <p style={{ fontSize: '0.85rem', marginTop: 8 }}>
@@ -97,9 +97,9 @@ export default function OrderTrackingPage() {
                     <div
                         key={order.order_number}
                         style={{
-                            background: 'var(--color-bg-card)',
+                            background: 'var(--bg-card)',
                             borderRadius: 'var(--radius-lg)',
-                            border: '1px solid var(--color-border)',
+                            border: '1px solid var(--border)',
                             padding: 24,
                             marginBottom: 20,
                         }}
@@ -109,7 +109,7 @@ export default function OrderTrackingPage() {
                                 <p style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '1.1rem' }}>
                                     {order.order_number}
                                 </p>
-                                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', marginTop: 4 }}>
+                                <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: 4 }}>
                                     {new Date(order.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
                                 </p>
                             </div>
@@ -129,14 +129,14 @@ export default function OrderTrackingPage() {
                                         <div key={s} style={{ display: 'flex', alignItems: 'center', gap: 4, flex: i < STATUS_ORDER.length - 1 ? 1 : 0 }}>
                                             <div style={{
                                                 width: 28, height: 28, borderRadius: 'var(--radius-full)',
-                                                background: isActive ? st.color : 'var(--color-surface)',
+                                                background: isActive ? st.color : 'var(--surface)',
                                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                                 flexShrink: 0,
                                             }}>
-                                                {isActive ? <CheckCircle size={14} color="white" /> : <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--color-border)' }} />}
+                                                {isActive ? <CheckCircle size={14} color="white" /> : <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--border)' }} />}
                                             </div>
                                             {i < STATUS_ORDER.length - 1 && (
-                                                <div style={{ flex: 1, height: 2, background: isActive && i < currentIndex ? st.color : 'var(--color-border)', borderRadius: 2, minWidth: 20 }} />
+                                                <div style={{ flex: 1, height: 2, background: isActive && i < currentIndex ? st.color : 'var(--border)', borderRadius: 2, minWidth: 20 }} />
                                             )}
                                         </div>
                                     );
@@ -145,10 +145,10 @@ export default function OrderTrackingPage() {
                         )}
 
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.85rem' }}>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
                                 {order.items?.length || 0} article{(order.items?.length || 0) > 1 ? 's' : ''}
                             </p>
-                            <p style={{ fontWeight: 700, color: 'var(--color-primary)', fontFamily: 'var(--font-heading)' }}>
+                            <p style={{ fontWeight: 700, color: 'var(--brand)', fontFamily: 'var(--font-heading)' }}>
                                 {formatPrice(order.total)}
                             </p>
                         </div>

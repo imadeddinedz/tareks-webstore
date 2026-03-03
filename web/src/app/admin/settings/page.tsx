@@ -25,7 +25,9 @@ export default function AdminSettings() {
     const [formState, setFormState] = useState({
         storeName: '', email: '', phone: '', address: '',
         apiId: '', apiToken: '',
+        announcementText: '',
     });
+    const [announcementActive, setAnnouncementActive] = useState(true);
 
     // Hero image
     const [heroPreview, setHeroPreview] = useState('');
@@ -52,7 +54,9 @@ export default function AdminSettings() {
             storeName: storeName || '', email: storeEmail || '',
             phone: storePhone || '', address: storeAddress || '',
             apiId: yalidineApiId || '', apiToken: yalidineApiToken || '',
+            announcementText: useSettingsStore.getState().announcementText || 'Livraison disponible vers les 58 wilayas',
         });
+        setAnnouncementActive(useSettingsStore.getState().announcementActive ?? true);
         setHeroPreview(heroImage || '/images/hero-bike.jpg');
         setLogoPreview(useSettingsStore.getState().logoImage || '');
     }, [storeName, storeEmail, storePhone, storeAddress, yalidineApiId, yalidineApiToken, heroImage]);
@@ -101,6 +105,8 @@ export default function AdminSettings() {
             storeName: formState.storeName, storeEmail: formState.email,
             storePhone: formState.phone, storeAddress: formState.address,
             yalidineApiId: formState.apiId, yalidineApiToken: formState.apiToken,
+            announcementText: formState.announcementText,
+            announcementActive: announcementActive
         });
         setSaving(false);
         success ? toast.success('Paramètres sauvegardés') : toast.error('Erreur lors de la sauvegarde');
@@ -260,6 +266,23 @@ export default function AdminSettings() {
                                     <div>
                                         <label className="block text-xs font-medium text-gray-700">Adresse physique</label>
                                         <textarea value={formState.address} onChange={(e) => setFormState({ ...formState, address: e.target.value })} placeholder="Centre-ville, Khemis Miliana" rows={2} className={inputClass + ' resize-none'} />
+                                    </div>
+                                    <div className="h-px bg-gray-100 my-2" />
+                                    <div>
+                                        <div className="flex items-center justify-between mb-2">
+                                            <label className="block text-xs font-medium text-gray-700">Message publicitaire (Bandeau haut)</label>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-[10px] text-gray-500 uppercase tracking-widest">{announcementActive ? 'Visible' : 'Masqué'}</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setAnnouncementActive(!announcementActive)}
+                                                    className={`w-9 h-5 rounded-full relative transition-colors ${announcementActive ? 'bg-amber-500' : 'bg-gray-300'}`}
+                                                >
+                                                    <div className={`w-4 h-4 bg-white rounded-full absolute top-0.5 shadow-sm transition-all ${announcementActive ? 'right-0.5' : 'left-0.5'}`} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <input type="text" value={formState.announcementText} onChange={(e) => setFormState({ ...formState, announcementText: e.target.value })} placeholder="ex: 🚚 Livraison 58 wilayas" className={inputClass} disabled={!announcementActive} />
                                     </div>
                                 </div>
                             </div>

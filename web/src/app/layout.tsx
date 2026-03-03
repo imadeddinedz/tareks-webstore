@@ -74,9 +74,9 @@ export default function RootLayout({
             position="top-center"
             toastOptions={{
               style: {
-                background: 'var(--color-bg-card)',
-                color: 'var(--color-text)',
-                border: '1px solid var(--color-border)',
+                background: 'var(--bg-card)',
+                color: 'var(--text)',
+                border: '1px solid var(--border)',
                 borderRadius: 'var(--radius-md)',
                 fontFamily: 'var(--font-body)',
               },

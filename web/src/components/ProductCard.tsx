@@ -45,17 +45,17 @@ export function ProductCard({ product, index = 0 }: { product: Product, index?: 
         {/* Badges */}
         <div className="absolute top-3 left-3 z-20 flex flex-col gap-2">
           {product.is_featured && (
-            <span className="badge badge-new shadow-lg backdrop-blur-md bg-[rgba(0,212,170,0.15)] border border-[rgba(0,212,170,0.3)]">
+            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase shadow-lg backdrop-blur-md bg-[rgba(245,158,11,0.15)] border border-[rgba(245,158,11,0.3)] text-[var(--brand)]">
               Nouveau
             </span>
           )}
           {isSale && (
-            <span className="badge badge-promo shadow-lg backdrop-blur-md bg-[rgba(255,107,53,0.15)] border border-[rgba(255,107,53,0.3)]">
+            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase shadow-lg backdrop-blur-md bg-[rgba(255,107,53,0.15)] border border-[rgba(255,107,53,0.3)] text-[#FF6B35]">
               Promo
             </span>
           )}
           {isOutOfStock && (
-            <span className="badge badge-stock shadow-lg backdrop-blur-md bg-[rgba(239,68,68,0.15)] border border-[rgba(239,68,68,0.3)]">
+            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase shadow-lg backdrop-blur-md bg-[rgba(239,68,68,0.15)] border border-[rgba(239,68,68,0.3)] text-[#EF4444]">
               Rupture
             </span>
           )}

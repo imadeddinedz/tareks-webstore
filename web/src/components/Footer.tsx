@@ -16,6 +16,7 @@ export function Footer() {
   const storePhone = useSettingsStore((s) => s.storePhone);
   const storeEmail = useSettingsStore((s) => s.storeEmail);
   const storeAddress = useSettingsStore((s) => s.storeAddress);
+  const logoImage = useSettingsStore((s) => s.logoImage);
   const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
@@ -34,9 +35,15 @@ export function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-2.5 mb-5 group">
-              <div className="w-9 h-9 rounded-lg bg-amber-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <span className="text-sm font-black text-white">H</span>
-              </div>
+              {logoImage ? (
+                <div className="relative w-10 h-10 flex items-center justify-center transition-transform group-hover:scale-110">
+                  <img src={logoImage} alt={storeName} className="object-contain w-full h-full" />
+                </div>
+              ) : (
+                <div className="w-9 h-9 rounded-lg bg-amber-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <span className="text-sm font-black text-white">H</span>
+                </div>
+              )}
               <span className="text-base font-bold tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>
                 {storeName.split(' ')[0]}{' '}
                 <span className="text-amber-500">{storeName.substring(storeName.indexOf(' ') + 1)}</span>

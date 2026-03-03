@@ -37,7 +37,7 @@ export default function FAQPage() {
                     <div className="w-20 h-20 mx-auto rounded-full bg-[rgba(0,212,170,0.1)] flex items-center justify-center text-[var(--brand)] mb-6 shadow-[0_0_30px_rgba(0,212,170,0.2)]">
                         <HelpCircle size={40} />
                     </div>
-                    <h1 className="font-heading font-black text-4xl md:text-5xl text-white mb-4 tracking-tight">Questions Fréquentes</h1>
+                    <h1 className="font-heading font-black text-4xl md:text-5xl text-[var(--text)] mb-4 tracking-tight">Questions Fréquentes</h1>
                     <p className="text-xl text-[var(--text-secondary)]">Tout ce que vous devez savoir sur nos services.</p>
                 </div>
 
@@ -55,7 +55,7 @@ export default function FAQPage() {
                                 onClick={() => setOpenIndex(openIndex === idx ? -1 : idx)}
                                 className="w-full flex items-center justify-between p-6 text-left"
                             >
-                                <span className={cn("font-bold text-lg", openIndex === idx ? "text-[var(--brand)]" : "text-white")}>
+                                <span className={cn("font-bold text-lg", openIndex === idx ? "text-[var(--brand)]" : "text-[var(--text)]")}>
                                     {faq.question}
                                 </span>
                                 <ChevronRight
@@ -90,7 +90,7 @@ export default function FAQPage() {
                     <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-elevated)] to-transparent opacity-50" />
                     <div className="relative z-10">
                         <MessageCircle size={32} className="mx-auto text-[var(--accent)] mb-4" />
-                        <h2 className="font-heading font-bold text-2xl text-white mb-2">Encore une question ?</h2>
+                        <h2 className="font-heading font-bold text-2xl text-[var(--text)] mb-2">Encore une question ?</h2>
                         <p className="text-[var(--text-secondary)] mb-6">Notre équipe est disponible sur WhatsApp pour vous aider.</p>
                         <a
                             href="https://wa.me/213555555555"

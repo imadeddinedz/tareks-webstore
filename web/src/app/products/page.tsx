@@ -14,94 +14,66 @@ export default async function ProductsPage({
   const currentCategory = categories.find((c) => c.slug === categorySlug);
 
   return (
-    <div className="page-enter" style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 16px 80px' }}>
-      <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.8rem', fontWeight: 800 }}>
-          {currentCategory ? currentCategory.name : 'Tous les produits'}
-        </h1>
-        <p style={{ color: 'var(--color-text-secondary)', marginTop: 8 }}>
-          {currentCategory
-            ? currentCategory.description
-            : 'Découvrez notre sélection de montres connectées, vélos et accessoires'}
-        </p>
-      </div>
-
-      {/* Category filters */}
-      <div
-        style={{
-          display: 'flex',
-          gap: 10,
-          marginBottom: 32,
-          overflowX: 'auto',
-          paddingBottom: 8,
-        }}
-      >
-        <Link
-          href="/products"
-          className="btn btn-sm"
-          style={{
-            background: !categorySlug ? 'var(--color-primary)' : 'var(--color-surface)',
-            color: !categorySlug ? '#0F0F1A' : 'var(--color-text-secondary)',
-            textDecoration: 'none',
-            whiteSpace: 'nowrap',
-            border: '1px solid var(--color-border)',
-          }}
-        >
-          Tous
-        </Link>
-        {categories.map((cat) => (
-          <Link
-            key={cat.id}
-            href={`/products?category=${cat.slug}`}
-            className="btn btn-sm"
-            style={{
-              background: categorySlug === cat.slug ? 'var(--color-primary)' : 'var(--color-surface)',
-              color: categorySlug === cat.slug ? '#0F0F1A' : 'var(--color-text-secondary)',
-              textDecoration: 'none',
-              whiteSpace: 'nowrap',
-              border: '1px solid var(--color-border)',
-            }}
-          >
-            {cat.name}
-          </Link>
-        ))}
-      </div>
-
-      {/* Products grid */}
-      {products.length === 0 ? (
-        <div
-          style={{
-            textAlign: 'center',
-            padding: '80px 20px',
-            color: 'var(--color-text-muted)',
-          }}
-        >
-          <p style={{ fontSize: '3rem', marginBottom: 16 }}>🔍</p>
-          <p style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: '1.1rem' }}>
-            Aucun produit trouvé
-          </p>
-          <p style={{ marginTop: 8, fontSize: '0.9rem' }}>
-            Essayez une autre catégorie ou revenez bientôt pour de nouveaux arrivages
+    <div className="page-enter min-h-screen bg-[var(--bg)] pb-24 pt-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-8">
+          <h1 className="font-heading text-3xl md:text-4xl font-black text-[var(--text)]">
+            {currentCategory ? currentCategory.name : 'Tous les produits'}
+          </h1>
+          <p className="text-[var(--text-secondary)] mt-2 text-lg">
+            {currentCategory
+              ? currentCategory.description
+              : 'Découvrez notre sélection de montres connectées, vélos et accessoires'}
           </p>
         </div>
-      ) : (
-        <>
-          <p style={{ color: 'var(--color-text-muted)', marginBottom: 20, fontSize: '0.85rem' }}>
-            {products.length} produit{products.length > 1 ? 's' : ''} trouvé{products.length > 1 ? 's' : ''}
-          </p>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-              gap: 20,
-            }}
+
+        {/* Category filters */}
+        <div className="flex gap-3 mb-10 overflow-x-auto pb-4 scrollbar-hide py-1 px-1">
+          <Link
+            href="/products"
+            className={!categorySlug
+              ? "px-5 py-2 rounded-xl text-sm font-bold bg-[var(--brand)] text-[#08080F] shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all"
+              : "px-5 py-2 rounded-xl text-sm font-medium glass border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text)] hover:border-[var(--brand)] transition-all"}
           >
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+            Tous
+          </Link>
+          {categories.map((cat) => (
+            <Link
+              key={cat.id}
+              href={`/products?category=${cat.slug}`}
+              className={categorySlug === cat.slug
+                ? "px-5 py-2 rounded-xl text-sm font-bold bg-[var(--brand)] text-[#08080F] shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all"
+                : "px-5 py-2 rounded-xl text-sm font-medium glass border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text)] hover:border-[var(--brand)] transition-all"}
+            >
+              {cat.name}
+            </Link>
+          ))}
+        </div>
+
+        {/* Products grid */}
+        {products.length === 0 ? (
+          <div className="text-center py-20 px-4 text-[var(--text-muted)] glass rounded-3xl border border-[var(--border)]">
+            <p className="text-5xl mb-4">🔍</p>
+            <p className="font-heading font-semibold text-xl text-[var(--text)]">
+              Aucun produit trouvé
+            </p>
+            <p className="mt-2 text-[var(--text-secondary)]">
+              Essayez une autre catégorie ou revenez bientôt pour de nouveaux arrivages
+            </p>
           </div>
-        </>
-      )}
+        ) : (
+          <>
+            <p className="text-[var(--text-muted)] mb-6 text-sm">
+              {products.length} produit{products.length > 1 ? 's' : ''} trouvé{products.length > 1 ? 's' : ''}
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+              {products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }

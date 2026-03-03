@@ -1,13 +1,14 @@
 'use client';
 
-const PHONE = '+213558866530';
-const WHATSAPP = '213558866530';
+import { useSettingsStore } from '@/store/settings';
 
 export function ContactButtons() {
+  const storePhone = useSettingsStore((s) => s.storePhone) || '+213558866530';
+  const whatsappNumber = storePhone.replace(/[\s+]/g, ''); // Removes spaces and + for matching wa.me format
   return (
     <div className="flex flex-wrap gap-3">
       <a
-        href={`https://wa.me/${WHATSAPP}`}
+        href={`https://wa.me/${whatsappNumber}`}
         target="_blank"
         rel="noopener noreferrer"
         className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-5 py-3 font-semibold text-white shadow-lg transition hover:bg-[#20bd5a]"
@@ -18,13 +19,13 @@ export function ContactButtons() {
         WhatsApp
       </a>
       <a
-        href={`tel:${PHONE}`}
+        href={`tel:${storePhone}`}
         className="inline-flex items-center gap-2 rounded-full bg-slate-800 px-5 py-3 font-semibold text-amber-50 transition hover:bg-slate-700"
       >
         <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
         </svg>
-        0558 86 65 30
+        {storePhone}
       </a>
     </div>
   );

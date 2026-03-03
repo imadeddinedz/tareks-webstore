@@ -58,6 +58,13 @@ export default function CheckoutPage() {
         setFormData({ ...formData, wilaya: e.target.value, commune: '' }); // Reset commune when wilaya changes
     };
 
+    const formatPhoneNumber = (value: string) => {
+        const cleaned = value.replace(/\D/g, '').slice(0, 9);
+        const match = cleaned.match(/^(\d{0,3})(\d{0,2})(\d{0,2})(\d{0,2})$/);
+        if (!match) return cleaned;
+        return [match[1], match[2], match[3], match[4]].filter(Boolean).join(' ');
+    };
+
     const handleNextStep = (e: React.FormEvent) => {
         e.preventDefault();
         if (step === 1) {
@@ -218,9 +225,10 @@ export default function CheckoutPage() {
                                                     type="tel"
                                                     required
                                                     value={formData.phone}
-                                                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                                    onChange={(e) => setFormData({ ...formData, phone: formatPhoneNumber(e.target.value) })}
                                                     className="w-full pl-[5.5rem] pr-4 py-3.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border)] focus:border-[var(--brand)] focus:ring-1 focus:ring-[var(--brand)] outline-none transition-all"
                                                     placeholder="555 12 34 56"
+                                                    maxLength={12}
                                                 />
                                             </div>
                                         </div>

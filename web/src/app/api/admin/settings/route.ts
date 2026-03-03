@@ -47,6 +47,21 @@ export async function PUT(request: NextRequest) {
             }, { onConflict: 'key' });
         }
 
+        if (settings.announcementText !== undefined || settings.announcementActive !== undefined) {
+            // Fetch current to merge if only one is updated
+            const { data: currentAnnData } = await supabaseAdmin.from('cms_content').select('value').eq('key', 'announcement_bar').single();
+            const currentVal = currentAnnData?.value || { text: '', is_active: true };
+
+            await supabaseAdmin.from('cms_content').upsert({
+                key: 'announcement_bar',
+                value: {
+                    text: settings.announcementText !== undefined ? settings.announcementText : currentVal.text,
+                    is_active: settings.announcementActive !== undefined ? settings.announcementActive : currentVal.is_active
+                },
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'key' });
+        }
+
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error('Admin settings error:', error);

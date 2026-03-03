@@ -18,7 +18,7 @@ export default function AboutPage() {
                     <span className="inline-block px-4 py-1.5 rounded-full bg-[rgba(0,212,170,0.1)] border border-[rgba(0,212,170,0.2)] text-[var(--brand)] text-sm font-bold tracking-widest uppercase mb-6 animate-slide-up">
                         À Propos de Nous
                     </span>
-                    <h1 className="font-heading font-black text-5xl md:text-7xl text-white mb-6 tracking-tight animate-slide-up stagger-1">
+                    <h1 className="font-heading font-black text-5xl md:text-7xl text-[var(--text)] mb-6 tracking-tight animate-slide-up stagger-1">
                         Redéfinir le Sport <br /><span className="gradient-text">en Algérie</span>
                     </h1>
                     <p className="text-xl md:text-2xl text-[var(--text-secondary)] font-body max-w-2xl mx-auto animate-slide-up stagger-2">
@@ -32,7 +32,7 @@ export default function AboutPage() {
                 <div className="glass rounded-[2rem] p-8 md:p-16 border border-[var(--border)] shadow-2xl">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                         <div>
-                            <h2 className="font-heading font-bold text-3xl md:text-4xl text-white mb-6">Notre Histoire</h2>
+                            <h2 className="font-heading font-bold text-3xl md:text-4xl text-[var(--text)] mb-6">Notre Histoire</h2>
                             <div className="space-y-6 text-[var(--text-secondary)] leading-relaxed text-lg">
                                 <p>
                                     Fondée par des passionnés de cyclisme et de randonnée, <strong>High Tech Sport</strong> est née d'un constat simple : il était souvent difficile de trouver du matériel haut de gamme et original en Algérie.
@@ -40,7 +40,7 @@ export default function AboutPage() {
                                 <p>
                                     Basés à Khemis Miliana, nous avons commencé par distribuer des montres intelligentes pour sportifs. Aujourd'hui, nous sommes fiers d'être l'une des destinations privilégiées pour les équipements Garmin ainsi que pour des vélos en fibre de carbone importés directement des meilleurs fabricants asiatiques et européens.
                                 </p>
-                                <p className="text-white font-medium pl-6 border-l-2 border-[var(--brand)]">
+                                <p className="text-[var(--text)] font-medium pl-6 border-l-2 border-[var(--brand)]">
                                     "Excellence, fiabilité, et proximité avec la communauté sportive algérienne."
                                 </p>
                             </div>
@@ -61,7 +61,7 @@ export default function AboutPage() {
             {/* Values */}
             <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-16">
-                    <h2 className="font-heading font-bold text-3xl md:text-4xl text-white">Nos Valeurs</h2>
+                    <h2 className="font-heading font-bold text-3xl md:text-4xl text-[var(--text)]">Nos Valeurs</h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -86,7 +86,7 @@ export default function AboutPage() {
                             <div className="w-14 h-14 rounded-2xl bg-[var(--surface-hover)] border border-[var(--border)] flex items-center justify-center text-[var(--brand)] mb-6 group-hover:scale-110 group-hover:-rotate-6 transition-transform shadow-lg">
                                 <val.icon size={28} />
                             </div>
-                            <h3 className="font-heading font-bold text-xl text-white mb-4">{val.title}</h3>
+                            <h3 className="font-heading font-bold text-xl text-[var(--text)] mb-4">{val.title}</h3>
                             <p className="text-[var(--text-secondary)] leading-relaxed">{val.desc}</p>
                         </div>
                     ))}
