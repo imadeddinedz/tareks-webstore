@@ -109,13 +109,48 @@ export default async function AdminDashboard() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          {/* Mobile Card List */}
+          <div className="sm:hidden flex flex-col divide-y divide-gray-100">
+            {orders.slice(0, 10).map((order) => {
+              const status = STATUS_CONFIG[order.status] || STATUS_CONFIG['new'];
+              return (
+                <div key={order.id} className="p-4 flex flex-col gap-3">
+                  <div className="flex justify-between items-center">
+                    <span className="font-mono font-bold text-gray-900 group-hover:text-[var(--brand-dark)] transition-colors">
+                      #{order.order_number || order.id.slice(0, 8).toUpperCase()}
+                    </span>
+                    <span className={cn(
+                      "inline-flex items-center justify-center px-3 py-1 rounded-full text-[10px] font-bold border",
+                      status.className
+                    )}>
+                      {status.label}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-end">
+                    <div className="min-w-0 pr-3">
+                      <div className="font-bold text-gray-900 text-sm truncate">{order.customer_name}</div>
+                      <div className="text-xs text-gray-500 truncate">{order.customer_wilaya}</div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div className="font-bold text-gray-900">{formatPrice(order.total)}</div>
+                      <div className="text-xs text-gray-500 font-medium">
+                        {formatDistanceToNow(new Date(order.created_at), { addSuffix: true, locale: fr })}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Desktop Table View */}
+          <table className="hidden sm:table w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-gray-100 text-gray-500 text-sm uppercase tracking-wider bg-gray-50">
                 <th className="px-4 sm:px-6 py-3.5 font-medium">Commande</th>
                 <th className="px-4 sm:px-6 py-3.5 font-medium">Client</th>
-                <th className="px-4 sm:px-6 py-3.5 font-medium hidden md:table-cell">Date</th>
-                <th className="px-4 sm:px-6 py-3.5 font-medium text-right hidden sm:table-cell">Montant</th>
+                <th className="px-4 sm:px-6 py-3.5 font-medium">Date</th>
+                <th className="px-4 sm:px-6 py-3.5 font-medium text-right">Montant</th>
                 <th className="px-4 sm:px-6 py-3.5 font-medium text-center">Statut</th>
               </tr>
             </thead>
@@ -131,13 +166,13 @@ export default async function AdminDashboard() {
                       <div className="text-sm text-gray-500 font-medium mt-1">{order.items?.length || 0} article(s)</div>
                     </td>
                     <td className="px-4 sm:px-6 py-4">
-                      <div className="font-bold text-gray-900 truncate max-w-[100px] sm:max-w-xs">{order.customer_name}</div>
-                      <div className="text-sm text-gray-500 truncate max-w-[100px] sm:max-w-xs">{order.customer_wilaya}</div>
+                      <div className="font-bold text-gray-900 truncate max-w-[150px]">{order.customer_name}</div>
+                      <div className="text-sm text-gray-500 truncate max-w-[150px]">{order.customer_wilaya}</div>
                     </td>
-                    <td className="px-4 sm:px-6 py-4 text-sm text-gray-500 font-medium hidden md:table-cell">
+                    <td className="px-4 sm:px-6 py-4 text-sm text-gray-500 font-medium">
                       {formatDistanceToNow(new Date(order.created_at), { addSuffix: true, locale: fr })}
                     </td>
-                    <td className="px-4 sm:px-6 py-4 text-right font-bold text-gray-900 hidden sm:table-cell">
+                    <td className="px-4 sm:px-6 py-4 text-right font-bold text-gray-900">
                       {formatPrice(order.total)}
                     </td>
                     <td className="px-4 sm:px-6 py-4 text-center">

@@ -43,7 +43,7 @@ export default function AdminCustomersPage() {
     });
 
     return (
-        <div className="px-4 py-6 sm:px-6 sm:py-8 md:px-10 lg:px-12 max-w-5xl mx-auto pb-24">
+        <div className="px-4 py-6 sm:px-6 sm:py-8 md:px-10 lg:px-12 w-full min-w-0 max-w-6xl mx-auto pb-24 relative">
             <div className="mb-8">
                 <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
                     Clients ({filtered.length})
@@ -72,7 +72,7 @@ export default function AdminCustomersPage() {
                 </button>
             </div>
 
-            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm relative min-h-[300px]">
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm relative min-h-[300px] w-full min-w-0 max-w-full">
                 {loading ? (
                     <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm z-10 rounded-2xl">
                         <div className="w-10 h-10 border-4 border-gray-100 border-t-[#F59E0B] rounded-full animate-spin mb-4" />

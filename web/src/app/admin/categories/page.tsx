@@ -142,7 +142,7 @@ export default function AdminCategoriesPage() {
                 </button>
             </div>
 
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden relative min-h-[200px]">
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden relative min-h-[200px] w-full min-w-0 max-w-full">
                 {loading ? (
                     <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm z-10">
                         <div className="w-8 h-8 border-[3px] border-gray-200 border-t-amber-500 rounded-full animate-spin mb-3" />

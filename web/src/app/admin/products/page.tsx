@@ -65,7 +65,7 @@ export default function AdminProducts() {
   });
 
   return (
-    <div className="px-4 py-6 sm:px-6 sm:py-8 md:px-10 md:py-10 lg:px-12 max-w-[1600px] mx-auto pb-24">
+    <div className="px-4 py-6 sm:px-6 sm:py-8 md:px-10 md:py-10 lg:px-12 w-full min-w-0 max-w-[1600px] mx-auto pb-24 relative">
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Catalogue Produits</h1>
@@ -106,7 +106,7 @@ export default function AdminProducts() {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm relative min-h-[400px]">
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm relative min-h-[400px] w-full min-w-0 max-w-full">
         {loading ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm z-10 rounded-lg">
             <div className="w-8 h-8 border-[3px] border-gray-200 border-t-amber-500 rounded-full animate-spin mb-3" />

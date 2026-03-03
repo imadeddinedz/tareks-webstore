@@ -214,7 +214,7 @@ export default function AdminSettings() {
     );
 
     return (
-        <div className="px-6 py-8 md:px-10 md:py-10 lg:px-12 max-w-5xl mx-auto pb-24">
+        <div className="px-4 py-6 sm:px-6 sm:py-8 md:px-10 lg:px-12 max-w-5xl mx-auto pb-24">
             <div className="mb-8">
                 <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Paramètres</h1>
                 <p className="text-sm text-gray-500 mt-1">Gérez les préférences de votre boutique.</p>
@@ -269,9 +269,9 @@ export default function AdminSettings() {
                                     </div>
                                     <div className="h-px bg-gray-100 my-2" />
                                     <div>
-                                        <div className="flex items-center justify-between mb-2">
+                                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-2">
                                             <label className="block text-xs font-medium text-gray-700">Message publicitaire (Bandeau haut)</label>
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex items-center gap-2 self-start sm:self-auto">
                                                 <span className="text-[10px] text-gray-500 uppercase tracking-widest">{announcementActive ? 'Visible' : 'Masqué'}</span>
                                                 <button
                                                     type="button"
@@ -388,7 +388,7 @@ export default function AdminSettings() {
                             <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden flex flex-col max-h-[600px]">
                                 <CardHeader icon={Truck} color="bg-blue-100 text-blue-600" title="Tarifs de livraison" desc="Modifiez les tarifs de livraison par wilaya. (DA)" />
 
-                                <div className="p-0 overflow-y-auto flex-1 bg-gray-50/30">
+                                <div className="p-0 overflow-auto flex-1 bg-gray-50/30">
                                     {loadingShipping ? (
                                         <div className="flex flex-col items-center justify-center py-12">
                                             <Loader2 size={32} className="animate-spin text-amber-500 mb-3" />
@@ -462,9 +462,9 @@ export default function AdminSettings() {
                             <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
                                 <CardHeader icon={Wallet} color="bg-blue-100 text-blue-600" title="Méthodes de paiement" desc="Configurez comment vous êtes payé." />
                                 <div className="px-5 py-5 sm:px-6 sm:py-6 space-y-3">
-                                    <div className={`flex items-center justify-between p-4 rounded-lg border ${codEnabled ? 'border-green-200 bg-green-50/60' : 'border-gray-200 bg-gray-50/60'}`}>
+                                    <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 rounded-lg border ${codEnabled ? 'border-green-200 bg-green-50/60' : 'border-gray-200 bg-gray-50/60'}`}>
                                         <div>
-                                            <div className="flex items-center gap-2.5">
+                                            <div className="flex flex-wrap items-center gap-2.5">
                                                 <span className="text-sm font-semibold text-gray-900">Paiement à la livraison (COD)</span>
                                                 <span className={`px-1.5 py-0.5 rounded text-[10px] uppercase tracking-wider font-bold border ${codEnabled ? 'bg-green-100 text-green-700 border-green-200' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
                                                     {codEnabled ? 'Actif' : 'Inactif'}
@@ -475,7 +475,7 @@ export default function AdminSettings() {
                                         <button
                                             type="button"
                                             onClick={() => setCodEnabled(!codEnabled)}
-                                            className={`w-11 h-6 rounded-full relative transition-colors shrink-0 ml-4 ${codEnabled ? 'bg-green-500' : 'bg-gray-300'}`}
+                                            className={`w-11 h-6 rounded-full relative transition-colors shrink-0 sm:ml-4 self-start sm:self-auto ${codEnabled ? 'bg-green-500' : 'bg-gray-300'}`}
                                         >
                                             <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 shadow-sm transition-all ${codEnabled ? 'right-0.5' : 'left-0.5'}`} />
                                         </button>
@@ -489,12 +489,12 @@ export default function AdminSettings() {
                                         </div>
                                     )}
 
-                                    <div className="flex items-center justify-between p-4 rounded-lg border border-gray-200 bg-gray-50/60 opacity-50">
+                                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 rounded-lg border border-gray-200 bg-gray-50/60 opacity-50">
                                         <div>
                                             <span className="text-sm font-semibold text-gray-900">CIB / Edahabia</span>
-                                            <p className="text-xs text-gray-500 mt-1">Paiement en ligne par carte. <span className="text-amber-600 font-medium">Bientôt disponible</span></p>
+                                            <p className="text-xs text-gray-500 mt-1">Paiement en ligne par carte. <span className="text-amber-600 font-medium whitespace-nowrap">Bientôt disponible</span></p>
                                         </div>
-                                        <div className="w-11 h-6 bg-gray-300 rounded-full relative cursor-not-allowed shrink-0 ml-4">
+                                        <div className="w-11 h-6 bg-gray-300 rounded-full relative cursor-not-allowed shrink-0 sm:ml-4 self-start sm:self-auto">
                                             <div className="w-5 h-5 bg-white rounded-full absolute left-0.5 top-0.5 shadow-sm" />
                                         </div>
                                     </div>
