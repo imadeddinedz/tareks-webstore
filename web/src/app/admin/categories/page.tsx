@@ -131,7 +131,7 @@ export default function AdminCategoriesPage() {
     const inputClass = "mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all";
 
     return (
-        <div className="px-6 py-8 md:px-10 md:py-10 lg:px-12 max-w-5xl mx-auto pb-24">
+        <div className="px-4 py-6 sm:px-6 sm:py-8 md:px-10 lg:px-12 max-w-5xl mx-auto pb-24">
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Catégories</h1>
@@ -160,8 +160,10 @@ export default function AdminCategoriesPage() {
                 ) : (
                     <div className="divide-y divide-gray-100">
                         {categories.map((cat) => (
-                            <div key={cat.id} className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50 transition-colors group">
-                                <GripVertical size={16} className="text-gray-300 cursor-grab shrink-0" />
+                            <div key={cat.id} className="flex flex-col sm:flex-row sm:items-center gap-4 px-4 sm:px-6 py-4 hover:bg-gray-50 transition-colors group">
+                                <div className="hidden sm:flex self-start sm:self-auto">
+                                    <GripVertical size={16} className="text-gray-300 cursor-grab shrink-0" />
+                                </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-3">
                                         {cat.image && (
@@ -178,11 +180,11 @@ export default function AdminCategoriesPage() {
                                     </div>
                                     <p className="text-xs text-gray-400 mt-0.5">/{cat.slug} • {cat.product_count || 0} produit(s)</p>
                                 </div>
-                                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button onClick={() => openEdit(cat)} className="p-2 rounded-lg bg-white border border-gray-200 text-gray-400 hover:text-amber-600 hover:border-amber-200 hover:bg-amber-50 shadow-sm transition-all" title="Modifier">
+                                <div className="flex items-center gap-2 sm:opacity-0 group-hover:opacity-100 transition-opacity self-end sm:self-auto w-full sm:w-auto justify-end sm:justify-start">
+                                    <button onClick={() => openEdit(cat)} className="flex-1 sm:flex-none p-2 rounded-lg bg-white border border-gray-200 text-gray-400 hover:text-amber-600 hover:border-amber-200 hover:bg-amber-50 shadow-sm transition-all flex items-center justify-center" title="Modifier">
                                         <Edit2 size={14} />
                                     </button>
-                                    <button onClick={() => handleDelete(cat.id)} className="p-2 rounded-lg bg-white border border-gray-200 text-gray-400 hover:text-red-600 hover:border-red-200 hover:bg-red-50 shadow-sm transition-all" title="Supprimer">
+                                    <button onClick={() => handleDelete(cat.id)} className="flex-1 sm:flex-none p-2 rounded-lg bg-white border border-gray-200 text-gray-400 hover:text-red-600 hover:border-red-200 hover:bg-red-50 shadow-sm transition-all flex items-center justify-center" title="Supprimer">
                                         <Trash2 size={14} />
                                     </button>
                                 </div>

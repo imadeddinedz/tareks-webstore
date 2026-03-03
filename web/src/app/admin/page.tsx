@@ -64,7 +64,7 @@ export default async function AdminDashboard() {
   };
 
   return (
-    <div className="px-6 py-8 md:px-10 md:py-10 lg:px-12 max-w-[1600px] mx-auto pb-24">
+    <div className="px-4 py-6 sm:px-6 sm:py-8 md:px-10 md:py-10 lg:px-12 max-w-[1600px] mx-auto pb-24">
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Vue d'ensemble</h1>
@@ -112,11 +112,11 @@ export default async function AdminDashboard() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-gray-100 text-gray-500 text-sm uppercase tracking-wider bg-gray-50">
-                <th className="px-6 py-3.5 font-medium">Commande</th>
-                <th className="px-6 py-3.5 font-medium">Client</th>
-                <th className="px-6 py-3.5 font-medium">Date</th>
-                <th className="px-6 py-3.5 font-medium text-right">Montant</th>
-                <th className="px-6 py-3.5 font-medium text-center">Statut</th>
+                <th className="px-4 sm:px-6 py-3.5 font-medium">Commande</th>
+                <th className="px-4 sm:px-6 py-3.5 font-medium">Client</th>
+                <th className="px-4 sm:px-6 py-3.5 font-medium hidden md:table-cell">Date</th>
+                <th className="px-4 sm:px-6 py-3.5 font-medium text-right hidden sm:table-cell">Montant</th>
+                <th className="px-4 sm:px-6 py-3.5 font-medium text-center">Statut</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -124,23 +124,23 @@ export default async function AdminDashboard() {
                 const status = STATUS_CONFIG[order.status] || STATUS_CONFIG['new'];
                 return (
                   <tr key={order.id} className="hover:bg-gray-50 transition-colors group">
-                    <td className="px-6 py-4">
+                    <td className="px-4 sm:px-6 py-4">
                       <span className="font-mono font-bold text-gray-900 group-hover:text-[var(--brand-dark)] transition-colors">
                         #{order.order_number || order.id.slice(0, 8).toUpperCase()}
                       </span>
                       <div className="text-sm text-gray-500 font-medium mt-1">{order.items?.length || 0} article(s)</div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="font-bold text-gray-900">{order.customer_name}</div>
-                      <div className="text-sm text-gray-500">{order.customer_wilaya}</div>
+                    <td className="px-4 sm:px-6 py-4">
+                      <div className="font-bold text-gray-900 truncate max-w-[100px] sm:max-w-xs">{order.customer_name}</div>
+                      <div className="text-sm text-gray-500 truncate max-w-[100px] sm:max-w-xs">{order.customer_wilaya}</div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500 font-medium">
+                    <td className="px-4 sm:px-6 py-4 text-sm text-gray-500 font-medium hidden md:table-cell">
                       {formatDistanceToNow(new Date(order.created_at), { addSuffix: true, locale: fr })}
                     </td>
-                    <td className="px-6 py-4 text-right font-bold text-gray-900">
+                    <td className="px-4 sm:px-6 py-4 text-right font-bold text-gray-900 hidden sm:table-cell">
                       {formatPrice(order.total)}
                     </td>
-                    <td className="px-6 py-4 text-center">
+                    <td className="px-4 sm:px-6 py-4 text-center">
                       <span className={cn(
                         "inline-flex items-center justify-center px-4 py-1.5 rounded-full text-xs font-bold border",
                         status.className

@@ -45,7 +45,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   };
 
   return (
-    <div className="min-h-screen bg-[#F1F5F9] text-gray-900 flex flex-col md:flex-row overflow-hidden" data-theme="light">
+    <div className="min-h-screen bg-[#F1F5F9] text-gray-900 flex flex-col md:flex-row overflow-hidden w-full max-w-full" data-theme="light">
       {/* Mobile Header */}
       <div className="md:hidden flex items-center justify-between p-4 bg-white border-b border-gray-200 shadow-sm z-30">
         <Link href="/admin" className="flex items-center gap-2">
@@ -129,7 +129,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </nav>
 
       {/* Main Area */}
-      <main className="flex-1 relative overflow-y-auto h-[var(--vh,100vh)] bg-[#F1F5F9]">
+      <main className="flex-1 relative overflow-y-auto overflow-x-hidden w-full max-w-full h-[var(--vh,100vh)] bg-[#F1F5F9]">
         <div className="relative z-10 w-full h-full flex flex-col">
           {children}
         </div>

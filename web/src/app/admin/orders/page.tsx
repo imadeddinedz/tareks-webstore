@@ -116,7 +116,7 @@ export default function AdminOrders() {
     });
 
     return (
-        <div className="px-6 py-8 md:px-10 md:py-10 lg:px-12 max-w-[1600px] mx-auto pb-24">
+        <div className="px-4 py-6 sm:px-6 sm:py-8 md:px-10 md:py-10 lg:px-12 max-w-[1600px] mx-auto pb-24">
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Gestion des Commandes</h1>
@@ -172,13 +172,13 @@ export default function AdminOrders() {
                         <table className="w-full text-left border-collapse whitespace-nowrap">
                             <thead>
                                 <tr className="border-b border-gray-100 text-gray-500 text-sm font-bold uppercase tracking-wider bg-gray-50">
-                                    <th className="px-6 py-5 first:pl-8">Commande</th>
-                                    <th className="px-6 py-5">Date</th>
-                                    <th className="px-6 py-5">Client</th>
-                                    <th className="px-6 py-5">Contact</th>
-                                    <th className="px-6 py-5 text-right">Total</th>
-                                    <th className="px-6 py-5 text-center">Statut</th>
-                                    <th className="px-6 py-5 text-right last:pr-8">Actions</th>
+                                    <th className="px-4 sm:px-6 py-5 first:pl-6 sm:first:pl-8">Commande</th>
+                                    <th className="px-4 sm:px-6 py-5 hidden md:table-cell">Date</th>
+                                    <th className="px-4 sm:px-6 py-5">Client</th>
+                                    <th className="px-4 sm:px-6 py-5 hidden sm:table-cell">Contact</th>
+                                    <th className="px-4 sm:px-6 py-5 text-right">Total</th>
+                                    <th className="px-4 sm:px-6 py-5 text-center">Statut</th>
+                                    <th className="px-4 sm:px-6 py-5 text-right last:pr-6 sm:last:pr-8">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
@@ -187,33 +187,33 @@ export default function AdminOrders() {
 
                                     return (
                                         <tr key={order.id} className="hover:bg-gray-50 transition-colors group">
-                                            <td className="px-6 py-5 first:pl-8">
+                                            <td className="px-4 sm:px-6 py-5 first:pl-6 sm:first:pl-8">
                                                 <span className="font-mono font-bold text-gray-900 group-hover:text-[var(--brand-dark)] transition-colors">
                                                     #{order.order_number || order.id.slice(0, 8).toUpperCase()}
                                                 </span>
                                                 <div className="text-sm font-medium text-gray-500 mt-1">{order.items?.length || 0} article(s)</div>
                                             </td>
-                                            <td className="px-6 py-5 text-sm font-bold text-gray-500">
+                                            <td className="px-4 sm:px-6 py-5 text-sm font-bold text-gray-500 hidden md:table-cell">
                                                 {formatDistanceToNow(new Date(order.created_at), { addSuffix: true, locale: fr })}
                                             </td>
-                                            <td className="px-6 py-5">
-                                                <div className="font-bold text-gray-900">{order.customer_name}</div>
-                                                <div className="text-sm text-gray-500 font-medium mt-1">{order.customer_address}, {order.customer_wilaya}</div>
+                                            <td className="px-4 sm:px-6 py-5">
+                                                <div className="font-bold text-gray-900 truncate max-w-[120px] sm:max-w-xs">{order.customer_name}</div>
+                                                <div className="text-sm text-gray-500 font-medium mt-1 truncate max-w-[120px] sm:max-w-xs">{order.customer_address}, {order.customer_wilaya}</div>
                                             </td>
-                                            <td className="px-6 py-5">
-                                                <div className="font-mono font-bold text-sm text-gray-600">{order.customer_phone}</div>
+                                            <td className="px-4 sm:px-6 py-5 hidden sm:table-cell">
+                                                <div className="font-mono font-bold text-sm text-gray-600 truncate max-w-[100px]">{order.customer_phone}</div>
                                             </td>
-                                            <td className="px-6 py-5 text-right">
-                                                <span className="font-black text-gray-900 text-lg">{formatPrice(order.total)}</span>
+                                            <td className="px-4 sm:px-6 py-5 text-right">
+                                                <span className="font-black text-gray-900 text-sm sm:text-lg">{formatPrice(order.total)}</span>
                                             </td>
-                                            <td className="px-6 py-5 text-center">
-                                                <span className={cn("inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold border", currentStatus.className)}>
-                                                    <currentStatus.icon size={14} /> {currentStatus.label}
+                                            <td className="px-4 sm:px-6 py-5 text-center">
+                                                <span className={cn("inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] sm:text-xs font-bold border", currentStatus.className)}>
+                                                    <currentStatus.icon size={14} className="hidden sm:block" /> {currentStatus.label}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-5 text-right last:pr-8 relative">
+                                            <td className="px-4 sm:px-6 py-5 text-right last:pr-6 sm:last:pr-8 relative">
                                                 {/* Actions */}
-                                                <div className="flex flex-row items-center justify-end gap-3 w-full">
+                                                <div className="flex flex-row items-center justify-end gap-2 w-full">
                                                     <button
                                                         onClick={() => handleYalidineSend(order)}
                                                         className="rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-500 hover:text-white border border-amber-200 hover:border-amber-500 px-3 py-1.5 text-xs font-semibold transition-all flex items-center gap-1.5 shadow-sm"

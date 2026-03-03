@@ -234,7 +234,7 @@ export default function AdminPromotionsPage() {
     }, 0);
 
     return (
-        <div className="px-6 py-8 md:px-10 md:py-10 lg:px-12 max-w-[1400px] mx-auto pb-24">
+        <div className="px-4 py-6 sm:px-6 sm:py-8 md:px-10 md:py-10 lg:px-12 max-w-[1400px] mx-auto pb-24">
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Promotions & Packs</h1>

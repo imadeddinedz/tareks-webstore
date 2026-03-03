@@ -43,7 +43,7 @@ export default function AdminCustomersPage() {
     });
 
     return (
-        <div className="px-6 py-8 md:px-10 md:py-10 lg:px-12 max-w-5xl mx-auto pb-24">
+        <div className="px-4 py-6 sm:px-6 sm:py-8 md:px-10 lg:px-12 max-w-5xl mx-auto pb-24">
             <div className="mb-8">
                 <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
                     Clients ({filtered.length})
@@ -81,17 +81,21 @@ export default function AdminCustomersPage() {
                 ) : (
                     <div className="divide-y divide-gray-100">
                         {filtered.map((customer) => (
-                            <div key={customer.id} className="flex flex-col sm:flex-row sm:items-center gap-4 px-6 py-5 hover:bg-gray-50 transition-colors group">
-                                <div className={`w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center ${customer.is_blacklisted ? 'bg-red-50 text-red-500' : 'bg-amber-50 text-amber-600'
+                            <div key={customer.id} className="flex flex-col sm:flex-row sm:items-center gap-4 px-4 sm:px-6 py-5 hover:bg-gray-50 transition-colors group">
+                                <div className={`w-12 h-12 hidden sm:flex rounded-full flex-shrink-0 items-center justify-center ${customer.is_blacklisted ? 'bg-red-50 text-red-500' : 'bg-amber-50 text-amber-600'
                                     }`}>
                                     {customer.is_blacklisted ? <UserX size={20} /> : <User size={20} />}
                                 </div>
 
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-3">
-                                        <p className="font-bold text-gray-900 text-lg">{customer.name}</p>
+                                        <div className={`w-8 h-8 sm:hidden rounded-full flex-shrink-0 flex items-center justify-center ${customer.is_blacklisted ? 'bg-red-50 text-red-500' : 'bg-amber-50 text-amber-600'
+                                            }`}>
+                                            {customer.is_blacklisted ? <UserX size={14} /> : <User size={14} />}
+                                        </div>
+                                        <p className="font-bold text-gray-900 text-lg truncate">{customer.name}</p>
                                         {customer.is_blacklisted && (
-                                            <span className="text-xs px-3 py-1 rounded-full bg-red-50 text-red-600 font-bold border border-red-100">
+                                            <span className="text-xs px-3 py-1 rounded-full bg-red-50 text-red-600 font-bold border border-red-100 whitespace-nowrap">
                                                 Bloqué
                                             </span>
                                         )}
@@ -106,11 +110,11 @@ export default function AdminCustomersPage() {
 
                                 <button
                                     onClick={() => handleToggleBlacklist(customer)}
-                                    className={`flex-shrink-0 rounded-md px-4 py-2 text-xs font-semibold transition-all border shadow-sm ${customer.is_blacklisted
+                                    className={`flex-shrink-0 rounded-md px-4 py-2 text-xs font-semibold w-full sm:w-auto transition-all border shadow-sm ${customer.is_blacklisted
                                         ? 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
                                         : 'bg-red-50 text-red-600 border-red-100 hover:bg-red-500 hover:text-white hover:border-red-500'
                                         }`}>
-                                    {customer.is_blacklisted ? 'Débloquer' : 'Bloquer'}
+                                    {customer.is_blacklisted ? 'Débloquer' : 'Bloquer ce client'}
                                 </button>
                             </div>
                         ))}

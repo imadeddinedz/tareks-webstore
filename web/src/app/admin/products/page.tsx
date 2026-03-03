@@ -65,7 +65,7 @@ export default function AdminProducts() {
   });
 
   return (
-    <div className="px-6 py-8 md:px-10 md:py-10 lg:px-12 max-w-[1600px] mx-auto pb-24">
+    <div className="px-4 py-6 sm:px-6 sm:py-8 md:px-10 md:py-10 lg:px-12 max-w-[1600px] mx-auto pb-24">
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Catalogue Produits</h1>
@@ -128,49 +128,49 @@ export default function AdminProducts() {
             <table className="w-full text-left border-collapse whitespace-nowrap">
               <thead>
                 <tr className="border-b border-gray-100 text-gray-500 text-sm font-bold uppercase tracking-wider bg-gray-50">
-                  <th className="px-6 py-5 first:pl-8">Produit</th>
-                  <th className="px-6 py-5">Catégorie</th>
-                  <th className="px-6 py-5 text-right">Prix</th>
-                  <th className="px-6 py-5 text-center">Stock</th>
-                  <th className="px-6 py-5 text-center">Statut</th>
-                  <th className="px-6 py-5 text-right last:pr-8">Actions</th>
+                  <th className="px-4 sm:px-6 py-5 first:pl-6 sm:first:pl-8">Produit</th>
+                  <th className="px-4 sm:px-6 py-5 hidden md:table-cell">Catégorie</th>
+                  <th className="px-4 sm:px-6 py-5 text-right">Prix</th>
+                  <th className="px-4 sm:px-6 py-5 text-center hidden sm:table-cell">Stock</th>
+                  <th className="px-4 sm:px-6 py-5 text-center">Statut</th>
+                  <th className="px-4 sm:px-6 py-5 text-right last:pr-6 sm:last:pr-8">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {filteredProducts.map((product) => (
                   <tr key={product.id} className="hover:bg-gray-50 transition-colors group">
-                    <td className="px-6 py-4 first:pl-8 flex items-center gap-5">
-                      <div className="relative w-14 h-14 rounded-xl bg-gray-50 border border-gray-200 overflow-hidden shrink-0 shadow-sm">
+                    <td className="px-4 sm:px-6 py-4 first:pl-4 sm:first:pl-8 flex items-center gap-3 sm:gap-5">
+                      <div className="relative w-10 h-10 sm:w-14 sm:h-14 rounded-xl bg-gray-50 border border-gray-200 overflow-hidden shrink-0 shadow-sm hidden sm:block">
                         <Image src={product.images[0] || '/images/placeholder.webp'} alt={product.name} fill className="object-cover" />
                       </div>
                       <div className="min-w-0">
-                        <div className="font-bold text-gray-900 truncate max-w-[150px] md:max-w-[200px] lg:max-w-[250px] xl:max-w-[300px] group-hover:text-amber-600 transition-colors" title={product.name ?? undefined}>{product.name}</div>
-                        <div className="text-xs font-medium text-gray-500 mt-1 truncate max-w-[150px] md:max-w-[200px] lg:max-w-[250px] xl:max-w-[300px]" title={product.description ?? undefined}>{product.description}</div>
+                        <div className="font-bold text-gray-900 truncate max-w-[120px] sm:max-w-[150px] md:max-w-[200px] lg:max-w-[250px] xl:max-w-[300px] group-hover:text-amber-600 transition-colors" title={product.name ?? undefined}>{product.name}</div>
+                        <div className="text-xs font-medium text-gray-500 mt-1 truncate max-w-[120px] sm:max-w-[150px] md:max-w-[200px] lg:max-w-[250px] xl:max-w-[300px]" title={product.description ?? undefined}>{product.description}</div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <span className="px-4 py-1.5 rounded-full bg-gray-50 text-gray-600 text-xs font-bold border border-gray-200">
+                    <td className="px-4 sm:px-6 py-4 hidden md:table-cell">
+                      <span className="px-3 sm:px-4 py-1.5 rounded-full bg-gray-50 text-gray-600 text-[10px] sm:text-xs font-bold border border-gray-200">
                         {product.category?.name || 'Non défini'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="font-black text-gray-900 text-lg">{formatPrice(product.price)}</div>
-                      {product.old_price && <div className="text-xs font-bold text-gray-400 line-through mt-0.5">{formatPrice(product.old_price)}</div>}
+                    <td className="px-4 sm:px-6 py-4 text-right">
+                      <div className="font-black text-gray-900 text-sm sm:text-lg">{formatPrice(product.price)}</div>
+                      {product.old_price && <div className="text-[10px] sm:text-xs font-bold text-gray-400 line-through mt-0.5">{formatPrice(product.old_price)}</div>}
                     </td>
-                    <td className="px-6 py-4 text-center">
+                    <td className="px-4 sm:px-6 py-4 text-center hidden sm:table-cell">
                       <span className={cn("font-bold text-lg", product.stock > 10 ? "text-green-600" : product.stock > 0 ? "text-amber-500" : "text-red-500")}>
                         {product.stock}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-center">
+                    <td className="px-4 sm:px-6 py-4 text-center">
                       {product.stock > 0 ? (
-                        <span className="inline-flex px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-green-50 text-green-700 border border-green-200">En ligne</span>
+                        <span className="inline-flex px-2 sm:px-3 py-1 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-wider bg-green-50 text-green-700 border border-green-200">En ligne</span>
                       ) : (
-                        <span className="inline-flex px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-red-50 text-red-600 border border-red-200">Rupture</span>
+                        <span className="inline-flex px-2 sm:px-3 py-1 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-wider bg-red-50 text-red-600 border border-red-200">Rupture</span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-right last:pr-8">
-                      <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <td className="px-4 sm:px-6 py-4 text-right last:pr-4 sm:last:pr-8">
+                      <div className="flex items-center justify-end gap-1 sm:gap-2 sm:opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => handleEdit(product)}
                           className="p-2.5 rounded-xl bg-white border border-gray-200 text-gray-400 hover:text-amber-600 hover:border-amber-200 hover:bg-amber-50 shadow-sm transition-all"
