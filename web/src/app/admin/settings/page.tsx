@@ -214,7 +214,7 @@ export default function AdminSettings() {
     );
 
     return (
-        <div className="px-4 py-6 sm:px-6 sm:py-8 md:px-10 lg:px-12 max-w-5xl mx-auto pb-24">
+        <div className="px-4 py-6 sm:px-6 sm:py-8 md:px-10 lg:px-12 w-full min-w-0 max-w-5xl mx-auto pb-24 relative overflow-hidden sm:overflow-visible">
             <div className="mb-8">
                 <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Paramètres</h1>
                 <p className="text-sm text-gray-500 mt-1">Gérez les préférences de votre boutique.</p>
@@ -222,8 +222,8 @@ export default function AdminSettings() {
 
             <div className="flex flex-col lg:flex-row gap-10">
                 {/* Sidebar Tabs */}
-                <div className="lg:w-52 shrink-0">
-                    <nav className="flex lg:flex-col gap-1 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 lg:sticky lg:top-6">
+                <div className="lg:w-52 shrink-0 w-full min-w-0 max-w-full">
+                    <nav className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 lg:sticky lg:top-6 scrollbar-hide w-full max-w-full">
                         {TABS.map((tab) => (
                             <button
                                 key={tab.key}
@@ -295,7 +295,7 @@ export default function AdminSettings() {
                                     {/* Logo Section */}
                                     <div>
                                         <label className="block text-sm font-semibold text-gray-900 mb-3">Logo de la boutique</label>
-                                        <div className="flex items-start gap-6">
+                                        <div className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6">
                                             <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-gray-50 flex items-center justify-center border-2 border-dashed border-gray-200 shrink-0 group">
                                                 {logoPreview ? (
                                                     <Image src={logoPreview} alt="Logo" fill className="object-contain p-2" sizes="96px" />
@@ -375,7 +375,7 @@ export default function AdminSettings() {
                                             <input type="password" value={formState.apiToken} onChange={(e) => setFormState({ ...formState, apiToken: e.target.value })} placeholder="Votre API Token" className={inputClass} />
                                         </div>
                                     </div>
-                                    <div className="flex items-center justify-between">
+                                    <div className="flex flex-col sm:flex-row sm:items-center gap-4 justify-between mt-4">
                                         <p className="text-xs text-gray-400">Obtenez vos identifiants sur <a href="https://yalidine.com" target="_blank" className="text-amber-600 hover:underline">yalidine.com</a></p>
                                         <button type="submit" disabled={saving} className="inline-flex items-center gap-2 rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-amber-600 disabled:opacity-50">
                                             {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
@@ -385,7 +385,7 @@ export default function AdminSettings() {
                                 </div>
                             </form>
 
-                            <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden flex flex-col max-h-[600px]">
+                            <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden flex flex-col max-h-[600px] w-full min-w-0 max-w-full relative">
                                 <CardHeader icon={Truck} color="bg-blue-100 text-blue-600" title="Tarifs de livraison" desc="Modifiez les tarifs de livraison par wilaya. (DA)" />
 
                                 <div className="p-0 overflow-auto flex-1 bg-gray-50/30">
@@ -524,7 +524,7 @@ export default function AdminSettings() {
                                             </button>
                                         </div>
                                     </div>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-5">
                                         <div>
                                             <label className="block text-xs font-medium text-gray-700">Nouveau mot de passe</label>
                                             <input type={showPasswords ? 'text' : 'password'} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required minLength={6} className={inputClass} />
